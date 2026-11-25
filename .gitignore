@@ -4,3 +4,6 @@ home-screenshot*.jpg
 proposal/
 screenshots/
 .vercel
+
+.vercel
+.env*
