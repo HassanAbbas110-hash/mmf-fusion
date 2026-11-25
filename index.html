@@ -23,8 +23,8 @@
 <link rel="apple-touch-icon" href="assets/img/icon-512.png">
 <link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=10">
-<link rel="stylesheet" href="assets/mmf.css?v=10">
+<link rel="stylesheet" href="assets/site.css?v=11">
+<link rel="stylesheet" href="assets/mmf.css?v=11">
 <style>
 .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .cat{position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(170deg,#0f1729,#0a0f1b);border:1px solid var(--line);padding:20px;min-height:250px;display:flex;flex-direction:column;justify-content:flex-end;transition:border-color .3s,transform .2s;transform-style:preserve-3d}
@@ -91,7 +91,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","@id":"https://mmf-fusion.vercel.app/#store","name":"MMF Fusion","description":"Vape shop in Glen Marais, Kempton Park: pod systems, box mods, e-liquids, coils, batteries, accessories and disposables.","url":"https://mmf-fusion.vercel.app/","logo":"https://mmf-fusion.vercel.app/assets/img/icon-512.png","image":"https://mmf-fusion.vercel.app/assets/img/og.jpg","email":"info@mmffusion.com","telephone":"+27746406614","priceRange":"R","address":{"@type":"PostalAddress","streetAddress":"231 Monument Road, Glen Marais","addressLocality":"Kempton Park","addressRegion":"Gauteng","addressCountry":"ZA"},"hasMap":"https://www.google.com/maps/search/?api=1&query=MMF+Fusion+231+Monument+Road+Glen+Marais+Kempton+Park","sameAs":["https://www.instagram.com/fusionmmf/","https://www.facebook.com/p/MMF-Fusion-61564144354367/","https://mmffusion.com/"]}</script>
 </head>
 <body data-page="home">
-<script src="assets/site.js?v=10"></script>
+<script src="assets/site.js?v=11"></script>
 <main id="main">
 
 <section class="vhero intro">
@@ -135,42 +135,6 @@
 
 <div class="ticker"><div class="mq" id="ticker"></div></div>
 
-<section class="story" id="story" aria-label="How MMF Fusion works">
-  <div class="story-pin">
-    <div class="wrap story-in">
-      <div class="story-copy">
-        <div class="sc on"><span class="tag">01 · Choose</span><h2>Pick your <span class="script">flavour</span></h2><p>Icy, fruity, sweet or classic, from Nasty, Oxbar, BLVK, Bewolk and more.</p></div>
-        <div class="sc"><span class="tag">02 · Fuse</span><h2>Match your <span class="script">setup</span></h2><p>Pod kit, mod or disposable. We help you find the right coil and nicotine strength for how you vape.</p></div>
-        <div class="sc"><span class="tag">03 · Enjoy</span><h2>Fill the <span class="script">room</span></h2><p>Collect at 231 Monument Road, Glen Marais, or get it couriered anywhere in South Africa.</p><a class="btn btn-red" href="shop.html">Shop the range <span data-i="arrow"></span></a></div>
-        <div class="story-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
-      </div>
-      <div class="story-stage" aria-hidden="true">
-        <div class="story-glow"></div>
-        <div class="pod-move"><div class="pod-bob">
-          <div class="cloud"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <svg class="pod" viewBox="0 0 200 420" width="200" height="420">
-            <defs>
-              <linearGradient id="pb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#16223d"/><stop offset=".45" stop-color="#22345c"/><stop offset="1" stop-color="#0b1326"/></linearGradient>
-              <linearGradient id="pl" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#9a8cff"/><stop offset=".6" stop-color="#5aa8ff"/><stop offset="1" stop-color="#3fd6f0"/></linearGradient>
-              <linearGradient id="pm" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a0f1b"/><stop offset=".5" stop-color="#1d2740"/><stop offset="1" stop-color="#0a0f1b"/></linearGradient>
-            </defs>
-            <rect x="72" y="6" width="56" height="62" rx="18" fill="url(#pm)" stroke="#3fd6f0" stroke-opacity=".35"/>
-            <rect x="92" y="10" width="16" height="6" rx="3" fill="#060912"/>
-            <rect x="36" y="56" width="128" height="350" rx="50" fill="url(#pb)" stroke="#3fd6f0" stroke-opacity=".45" stroke-width="1.5"/>
-            <rect x="66" y="96" width="68" height="160" rx="28" fill="#060a14" stroke="#3fd6f0" stroke-opacity=".3"/>
-            <rect class="liq" x="70" y="100" width="60" height="152" rx="24" fill="url(#pl)"/>
-            <g class="bub" fill="#fff" fill-opacity=".55"><circle cx="86" cy="230" r="3"/><circle cx="110" cy="214" r="2"/><circle cx="98" cy="240" r="2.5"/><circle cx="118" cy="236" r="1.8"/></g>
-            <path d="M54 110 C 52 200, 52 300, 62 370" stroke="#fff" stroke-opacity=".14" stroke-width="7" fill="none" stroke-linecap="round"/>
-            <text x="100" y="296" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="26" fill="#eef4fa" letter-spacing="2">MMF</text>
-            <text x="100" y="314" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#3fd6f0" letter-spacing="5">FUSION</text>
-            <rect class="led" x="90" y="336" width="20" height="44" rx="10" fill="#3fd6f0"/>
-          </svg>
-        </div></div>
-      </div>
-    </div>
-    <div class="story-bar" aria-hidden="true"><i></i></div>
-  </div>
-</section>
 
 <section class="sec">
   <div class="wrap">
@@ -320,6 +284,29 @@
 </section>
 
 </main>
+<div class="trav" id="trav" aria-hidden="true">
+  <i class="tr-dot"></i><i class="tr-dot"></i><i class="tr-dot"></i><i class="tr-dot"></i><i class="tr-dot"></i><i class="tr-dot"></i><i class="tr-dot"></i><i class="tr-dot"></i>
+  <div class="tr-pod">
+    <div class="tr-cloud"><i></i><i></i><i></i><i></i><i></i></div>
+    <svg class="pod" viewBox="0 0 200 420" width="200" height="420">
+      <defs>
+        <linearGradient id="pb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#16223d"/><stop offset=".45" stop-color="#22345c"/><stop offset="1" stop-color="#0b1326"/></linearGradient>
+        <linearGradient id="pl" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#9a8cff"/><stop offset=".6" stop-color="#5aa8ff"/><stop offset="1" stop-color="#3fd6f0"/></linearGradient>
+        <linearGradient id="pm" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a0f1b"/><stop offset=".5" stop-color="#1d2740"/><stop offset="1" stop-color="#0a0f1b"/></linearGradient>
+      </defs>
+      <rect x="72" y="6" width="56" height="62" rx="18" fill="url(#pm)" stroke="#3fd6f0" stroke-opacity=".35"/>
+      <rect x="92" y="10" width="16" height="6" rx="3" fill="#060912"/>
+      <rect x="36" y="56" width="128" height="350" rx="50" fill="url(#pb)" stroke="#3fd6f0" stroke-opacity=".5" stroke-width="2"/>
+      <rect x="66" y="96" width="68" height="160" rx="28" fill="#060a14" stroke="#3fd6f0" stroke-opacity=".3"/>
+      <rect class="liq" x="70" y="100" width="60" height="152" rx="24" fill="url(#pl)"/>
+      <g class="bub" fill="#fff" fill-opacity=".6"><circle cx="86" cy="230" r="3"/><circle cx="110" cy="214" r="2"/><circle cx="98" cy="240" r="2.5"/><circle cx="118" cy="236" r="1.8"/></g>
+      <path d="M54 110 C 52 200, 52 300, 62 370" stroke="#fff" stroke-opacity=".14" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <text x="100" y="296" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="26" fill="#eef4fa" letter-spacing="2">MMF</text>
+      <text x="100" y="314" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#3fd6f0" letter-spacing="5">FUSION</text>
+      <rect class="led" x="90" y="336" width="20" height="44" rx="10" fill="#3fd6f0"/>
+    </svg>
+  </div>
+</div>
 <script>
 $$("[data-i]").forEach((el) => (el.outerHTML = I[el.dataset.i]));
 $$("[data-ic]").forEach((el) => (el.innerHTML = I[el.dataset.ic]));
@@ -518,19 +505,47 @@ $("#spin-go").onclick = async () => {
   spinning = false; $("#spin-go").disabled = false; $("#spin-go").firstChild.textContent = "Spin again ";
 };
 
-/* ---------- scroll story: the pod rises, fills, lights up and fills the room as you scroll (transforms only) ---------- */
-afterLoad(function story() {
-  const el = $("#story"), dots = $$(".story-dots i", el), steps = $$(".sc", el); if (!el || reduced) return;
-  let ticking = 0, cur = 0;
-  const upd = () => {
-    ticking = 0;
-    const r = el.getBoundingClientRect(), p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
-    el.style.setProperty("--p", p.toFixed(3));
-    const s = Math.min(2, Math.floor(p * 3.001));
-    if (s !== cur) { cur = s; steps.forEach((x, i) => x.classList.toggle("on", i === s)); dots.forEach((x, i) => x.classList.toggle("on", i <= s)); }
+/* ---------- the travelling vape: weaves left and right down the whole page as you scroll, puffing as it moves ---------- */
+afterLoad(function traveller() {
+  const t = $("#trav"); if (!t) return;
+  if (reduced) return t.remove();
+  const pod = $(".tr-pod", t), dots = $$(".tr-dot", t);
+  // [page progress, x (share of width), y (share of height), tilt°]: it swings edge to edge, crossing between sections
+  const PATH = [[0, .84, .62, -16], [.07, .9, .5, 10], [.16, .08, .42, -24], [.27, .91, .58, 18], [.38, .07, .36, -16], [.5, .9, .62, 22],
+    [.62, .1, .44, -20], [.74, .9, .38, 14], [.86, .09, .56, -12], [1, .84, .48, 0]];
+  const ease = (k) => k * k * (3 - 2 * k);
+  let W, H, max, ph, pw, cur = null, lastY = scrollY, vel = 0, raf = 0;
+  const hist = [];
+  const size = () => { W = innerWidth; H = innerHeight; max = Math.max(1, document.documentElement.scrollHeight - H); ph = W < 700 ? 92 : 180; pw = ph * 200 / 420; };
+  size(); addEventListener("resize", size);
+  new ResizeObserver(size).observe(document.body); // shelves fill in later and make the page taller
+  const target = () => {
+    const p = Math.min(1, Math.max(0, scrollY / max));
+    let i = 0; while (i < PATH.length - 2 && p > PATH[i + 1][0]) i++;
+    const a = PATH[i], b = PATH[i + 1], k = ease(Math.min(1, (p - a[0]) / (b[0] - a[0])));
+    const lx = (v) => (W < 700 ? (v < .5 ? .84 : .93) : v); // phones: sway along the right edge, clear of the text
+    return { p, x: (lx(a[1]) + (lx(b[1]) - lx(a[1])) * k) * W, y: (a[2] + (b[2] - a[2]) * k) * H, r: a[3] + (b[3] - a[3]) * k };
   };
-  addEventListener("scroll", () => { if (!ticking) { ticking = 1; requestAnimationFrame(upd); } }, { passive: true });
-  addEventListener("resize", upd); upd();
+  const frame = () => {
+    raf = 0;
+    const g = target();
+    vel = vel * .85 + (scrollY - lastY) * .15; lastY = scrollY;
+    cur = cur ? { x: cur.x + (g.x - cur.x) * .09, y: cur.y + (g.y - cur.y) * .09, r: cur.r + (g.r + Math.max(-22, Math.min(22, vel * .6)) - cur.r) * .12 } : { ...g };
+    pod.style.transform = `translate3d(${cur.x - pw / 2}px,${cur.y - ph / 2}px,0) rotate(${cur.r.toFixed(1)}deg)`;
+    pod.style.setProperty("--p", g.p.toFixed(3)); // tank fills as you go down the page
+    const speed = Math.min(1, Math.abs(vel) / 30);
+    pod.style.setProperty("--puff", (.35 + speed * .65).toFixed(2));
+    pod.style.setProperty("--r", cur.r.toFixed(1));
+    // vapour trail: dots follow where the pod has just been
+    hist.unshift([cur.x, cur.y]); hist.length = Math.min(hist.length, 32);
+    dots.forEach((d, i) => { const h = hist[Math.min(hist.length - 1, (i + 1) * 4)]; d.style.transform = `translate3d(${h[0] - 14}px,${h[1] - 14}px,0) scale(${(1 - i / 9) * (.6 + speed)})`; d.style.opacity = ((1 - i / 8) * (.15 + speed * .7)).toFixed(2); });
+    // fade in once you leave the hero, out over the footer
+    const y = scrollY; t.style.opacity = Math.min(1, Math.max(0, (y - H * .35) / (H * .4)), Math.max(0, (max - y) / (H * .5))).toFixed(2);
+    const moving = Math.abs(g.x - cur.x) + Math.abs(g.y - cur.y) > .5 || Math.abs(vel) > .2;
+    if (moving) raf = requestAnimationFrame(frame);
+  };
+  addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(frame); }, { passive: true });
+  frame();
 });
 
 const whenNeeded = (fn) => {

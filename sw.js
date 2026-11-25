@@ -1,5 +1,5 @@
 // Offline support: pages and stock list network-first (fresh when online), everything else cache-first.
-const CACHE = "mmf-v10";
+const CACHE = "mmf-v11";
 const CORE = ["./", "index.html", "shop.html", "visit.html", "help.html", "about.html", "guide.html", "fit.html", "product.html", "assets/site.css", "assets/mmf.css", "assets/site.js", "assets/fits.js", "assets/img/logo.webp", "assets/img/logo-sm.webp", "assets/img/logo-dark.webp", "assets/img/icon.png"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });

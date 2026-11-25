@@ -311,54 +311,25 @@ body.gated main,body.gated .ftr{content-visibility:hidden}
 .nav a{white-space:nowrap}
 @media (max-width:1180px){.nav{display:none}.burger{display:grid}}
 
-/* ---------- scroll story: a pod pinned on screen that rises, fills and vapes as you scroll (--p 0→1 set from scroll) ---------- */
-.story{--p:0;--rise:20vh;position:relative;height:320vh}
-.story-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;align-items:center;
-  background:radial-gradient(ellipse 50% 60% at 72% 50%,rgba(90,168,255,.12),transparent 70%),var(--bg)}
-.story-in{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;width:100%;padding-top:var(--hdr)}
-.story-copy{display:grid;align-content:center;min-height:320px}
-.sc{grid-area:1/1;align-self:center;opacity:0;transform:translateY(40px);filter:blur(6px);transition:opacity .6s var(--ease),transform .6s var(--ease),filter .6s var(--ease);pointer-events:none}
-.sc.on{opacity:1;transform:none;filter:none;pointer-events:auto}
-.sc h2{font-size:clamp(52px,7vw,104px);line-height:.92;margin:14px 0 18px}
-.sc p{color:var(--mute);font-size:clamp(16px,1.5vw,19px);max-width:460px;margin-bottom:24px}
-.story-dots{grid-area:2/1;display:flex;gap:8px;margin-top:28px}
-.story-dots i{width:34px;height:4px;border-radius:2px;background:rgba(255,255,255,.12);transition:background .4s}
-.story-dots i.on{background:var(--fusion)}
-.story-stage{position:relative;height:min(78vh,640px);display:grid;place-items:center}
-.story-glow{position:absolute;inset:10% 15%;border-radius:50%;background:conic-gradient(from 90deg,#3fd6f0,#5aa8ff,#9a8cff,#3fd6f0);filter:blur(60px);opacity:calc(.15 + var(--p) * .4)}
-.pod-move{position:relative;z-index:1;transform:translateY(calc((.55 - var(--p)) * var(--rise))) rotate(calc(-24deg + var(--p) * 30deg)) scale(calc(.82 + var(--p) * .2));will-change:transform}
-.pod-bob{animation:bob 3.6s ease-in-out infinite}
-@keyframes bob{50%{transform:translateY(-14px) rotate(1.5deg)}}
-.pod{display:block;width:auto;height:min(46vh,380px);filter:drop-shadow(0 40px 50px rgba(0,0,0,.55)) drop-shadow(0 0 30px rgba(63,214,240,.18))}
-.pod .liq{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(min(1,calc(.12 + var(--p) * 1.4)))}
-.pod .bub{opacity:calc(var(--p) * 1.5 - .2);animation:bubble 2.4s ease-in-out infinite}
+/* ---------- the travelling vape (home): fixed layer, moved with transforms from scroll ---------- */
+.trav{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;overflow:hidden}
+.tr-pod{--p:0;--puff:.35;--r:0;position:absolute;left:0;top:0;width:86px;height:180px;will-change:transform}
+.tr-pod .pod{display:block;width:100%;height:100%;animation:bob 3.4s ease-in-out infinite;filter:drop-shadow(0 18px 24px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(63,214,240,.35))}
+@keyframes bob{50%{transform:translateY(-8px) rotate(2deg)}}
+.pod .liq{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(min(1,calc(.18 + var(--p) * .9)))}
+.pod .bub{animation:bubble 2.4s ease-in-out infinite}
 @keyframes bubble{50%{transform:translateY(-12px)}}
-.pod .led{opacity:calc(.15 + var(--p) * 1.6);filter:drop-shadow(0 0 8px #3fd6f0)}
-/* the cloud rides with the pod but counter-rotates, so vapour always rises straight up from the mouthpiece */
-.pod-bob{position:relative}
-.cloud{position:absolute;left:50%;bottom:91%;width:min(520px,150%);aspect-ratio:1.2;translate:-50% 0;z-index:2;pointer-events:none;
-  opacity:calc(var(--p) * 2.4 - .4);transform:rotate(calc(24deg - var(--p) * 30deg)) scale(calc(.35 + var(--p) * 1.05));transform-origin:50% 100%}
-.cloud i{position:absolute;left:50%;bottom:0;width:38%;aspect-ratio:1;margin-left:-19%;border-radius:50%;
-  background:radial-gradient(closest-side,rgba(240,250,255,.85),rgba(120,190,255,.3) 55%,transparent);filter:blur(12px);animation:puff 4.2s ease-out infinite}
-.cloud i:nth-child(2){animation-delay:-.6s;--x:-70%}.cloud i:nth-child(3){animation-delay:-1.2s;--x:60%}
-.cloud i:nth-child(4){animation-delay:-1.8s;--x:-30%;background:radial-gradient(closest-side,rgba(154,140,255,.75),transparent)}
-.cloud i:nth-child(5){animation-delay:-2.4s;--x:90%}.cloud i:nth-child(6){animation-delay:-3s;--x:-100%;background:radial-gradient(closest-side,rgba(63,214,240,.75),transparent)}
-.cloud i:nth-child(7){animation-delay:-3.6s;--x:20%}
-@keyframes puff{0%{transform:translate(0,40%) scale(.25);opacity:0}20%{opacity:1}100%{transform:translate(var(--x,0),-120%) scale(2.4);opacity:0}}
-.story-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.06)}
-.story-bar i{display:block;height:100%;width:calc(var(--p) * 100%);background:var(--fusion);box-shadow:0 0 12px rgba(63,214,240,.7)}
-@media (max-width:900px){
-  .story{--rise:8svh}
-  .story-in{grid-template-columns:1fr;gap:0;align-content:center;height:100%}
-  .story-stage{order:-1;height:52svh}
-  .pod{height:min(40svh,340px)}
-  .story-copy{min-height:0;text-align:center;justify-items:center}
-  .sc h2{font-size:clamp(44px,12vw,64px);margin:8px 0 10px}
-  .sc p{margin:0 auto 18px;font-size:15px}
-  .story-dots{justify-content:center;margin-top:16px}
-}
-@media (prefers-reduced-motion:reduce){
-  .story{height:auto}.story-pin{position:static;height:auto;padding-block:64px}
-  .story{--p:.8}.sc{opacity:1;transform:none;filter:none;grid-area:auto;margin-bottom:28px;pointer-events:auto}
-  .pod-bob,.cloud i,.pod .bub{animation:none}.story-dots,.story-bar{display:none}
-}
+.pod .led{opacity:calc(.3 + var(--puff));filter:drop-shadow(0 0 8px #3fd6f0)}
+/* vapour from the mouthpiece: counter-rotated so it always rises straight up */
+.tr-cloud{position:absolute;left:50%;bottom:92%;width:240%;aspect-ratio:1;translate:-50% 0;transform:rotate(calc(var(--r) * -1deg));transform-origin:50% 100%;opacity:var(--puff)}
+.tr-cloud i{position:absolute;left:50%;bottom:0;width:46%;aspect-ratio:1;margin-left:-23%;border-radius:50%;background:radial-gradient(closest-side,rgba(240,250,255,.8),rgba(120,190,255,.25) 55%,transparent);filter:blur(8px);animation:puff 3.2s ease-out infinite}
+.tr-cloud i:nth-child(2){animation-delay:-.65s;--x:-60%;background:radial-gradient(closest-side,rgba(63,214,240,.7),transparent)}
+.tr-cloud i:nth-child(3){animation-delay:-1.3s;--x:55%}
+.tr-cloud i:nth-child(4){animation-delay:-1.95s;--x:-25%;background:radial-gradient(closest-side,rgba(154,140,255,.7),transparent)}
+.tr-cloud i:nth-child(5){animation-delay:-2.6s;--x:30%}
+@keyframes puff{0%{transform:translate(0,40%) scale(.25);opacity:0}20%{opacity:1}100%{transform:translate(var(--x,0),-130%) scale(2.2);opacity:0}}
+/* trail of vapour dots where it has just been */
+.tr-dot{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;opacity:0;background:radial-gradient(closest-side,rgba(63,214,240,.8),rgba(154,140,255,.3) 60%,transparent);filter:blur(4px);will-change:transform}
+.tr-dot:nth-child(even){background:radial-gradient(closest-side,rgba(154,140,255,.8),rgba(63,214,240,.25) 60%,transparent)}
+@media (max-width:700px){.tr-pod{width:44px;height:92px}}
+@media (prefers-reduced-motion:reduce){.trav{display:none}}
