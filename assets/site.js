@@ -1,0 +1,524 @@
+/* MMF Fusion — shared header, footer, cart, favourites, age check. Every page loads this. */
+const CONFIG = {
+  name: "MMF Fusion",
+  phone: "+27 74 640 6614",
+  whatsapp: "27746406614",
+  email: "info@mmffusion.com",
+  address: ["231 Monument Road", "Glen Marais", "Kempton Park, Gauteng"],
+  mapsQuery: "MMF Fusion, 231 Monument Road, Glen Marais, Kempton Park",
+  hoursNote: "", // TODO: trading hours from the shop
+  onlineStore: "", // WooCommerce shop; "" = WhatsApp ordering only (their online shop is still empty)
+  instagram: "https://www.instagram.com/fusionmmf/",
+  facebook: "https://www.facebook.com/p/MMF-Fusion-61564144354367/",
+  group: "https://chat.whatsapp.com/Iu00TOQSfGVEHQCx7Zd4Ka", // WhatsApp group for drops and specials
+  partnerName: "7Waves", // delivery partner shown as a 3rd way to get an order; "" hides every partner card, button and sentence
+  partnerLive: false,    // false = 7Waves shows as "coming soon" until the shop confirms
+  partnerUrl: "https://waves-pink-kappa.vercel.app"
+};
+// hours: [Sun, Mon, Tue, Wed, Thu, Fri, Sat], "" = closed, e.g. wk("09:00-14:00", "08:00-18:00").
+// null until the shop confirms: every "open now" badge stays hidden.
+const wk = (sun, mon, tue, wed, thu, fri, sat) => [sun, mon, tue ?? mon, wed ?? mon, thu ?? mon, fri ?? mon, sat ?? mon];
+const SHOP = { name: "Kempton Park", area: "Glen Marais", addr: "231 Monument Road, Glen Marais, Kempton Park", tel: "074 640 6614", hrs: null };
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+// time in South Africa, whatever the visitor's clock says
+function saNow() {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Johannesburg", weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()).map((x) => [x.type, x.value]));
+  return { day: DAYS.indexOf(parts.weekday), min: +parts.hour * 60 + +parts.minute };
+}
+const toMin = (t) => +t.slice(0, 2) * 60 + +t.slice(3, 5);
+function openState(st, now = saNow()) {
+  const today = st.hrs[now.day];
+  if (today) {
+    const [o, c] = today.split("-").map(toMin);
+    if (now.min >= o && now.min < c) return { open: true, soon: c - now.min <= 60, text: c - now.min <= 60 ? `Closes in ${c - now.min} min` : `Open until ${today.slice(6)}` };
+    if (now.min < o) return { open: false, text: `Opens today at ${today.slice(0, 5)}` };
+  }
+  for (let i = 1; i <= 7; i++) { const d = (now.day + i) % 7; if (st.hrs[d]) return { open: false, text: `Opens ${i === 1 ? "tomorrow" : DAYS[d]} at ${st.hrs[d].slice(0, 5)}` }; }
+  return { open: false, text: "Closed" };
+}
+// collapse the week into lines like "Mon–Sat 08:00–20:00"
+function hoursLines(st) {
+  const order = [1, 2, 3, 4, 5, 6, 0], out = [];
+  order.forEach((d) => { const h = st.hrs[d] || "Closed", last = out[out.length - 1]; last && last.h === h ? (last.to = d) : out.push({ from: d, to: d, h }); });
+  return out.map((r) => `${DAYS[r.from]}${r.to !== r.from ? "–" + DAYS[r.to] : ""} ${r.h.replace("-", "–")}`);
+}
+const DETAIL_SHARDS = 40; // must match SHARDS in tools/snapshot.py
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const R = (n) => "R" + Math.round(n).toLocaleString("en-ZA").replace(/ /g, " ");
+const wa = (text) => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
+const findLink = (what) => "https://www.google.com/search?q=" + encodeURIComponent(what);
+const igLink = () => CONFIG.instagram || findLink("MMF Fusion Kempton Park Instagram");
+const fbLink = () => CONFIG.facebook || findLink("MMF Fusion Kempton Park Facebook");
+const waveLink = () => CONFIG.partnerUrl || findLink(CONFIG.partnerName + " delivery " + CONFIG.name);
+const reviewLink = findLink("MMF Fusion Kempton Park reviews");
+const mapsLink = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(CONFIG.mapsQuery);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+
+const I = {
+  bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-9.2-9.3C1.7 7.5 3.9 4.5 7 4.5c2 0 3.3 1 5 3 1.7-2 3-3 5-3 3.1 0 5.3 3 4.2 6.2C19.5 15.4 12 20 12 20Z"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h11"/></svg>',
+  arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  out: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>',
+  wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.3 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  truck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>'
+};
+
+/* ---------- product data ---------- */
+let productsPromise;
+// the stock list waits until the visitor is past the 18+ gate: nothing behind the gate needs it
+let gateOpen; const gatePassed = new Promise((r) => (gateOpen = r));
+const byId = new Map();
+function loadProducts() {
+  productsPromise ??= gatePassed.then(() => fetch("assets/products.json")).then((r) => r.json()).then((list) => { list.forEach((p) => byId.set(p.id, p)); return list; });
+  return productsPromise;
+}
+async function loadDetail(id) {
+  try { const shard = await fetch(`assets/details/${id % DETAIL_SHARDS}.json`).then((r) => r.json()); return shard[id] || {}; }
+  catch { return {}; }
+}
+// flavour families matched against product names (shop filter + home flavour finder)
+const FLAVOURS = {
+  ice: { label: "Icy & minty", re: /\b(ice|iced|icy|menthol|mint|cool|frost|freeze|frozen|chill|polar|arctic)/i },
+  fruit: { label: "Fruity", re: /(apple|berry|berries|mango|grape|melon|peach|lemon|lime|kiwi|pineapple|strawberr|cherry|banana|guava|orange|lychee|passion|citrus|tropical|fruit|pear|plum|papaya|dragon|blackcurrant|raspberr|blueberr)/i },
+  sweet: { label: "Sweet & dessert", re: /(vanilla|custard|cream|cake|candy|gum|cola|milkshake|caramel|cookie|donut|bubble|sweet|honey|cereal|pudding|toffee|chocolate|soda|lemonade|energy|rainbow)/i },
+  tobacco: { label: "Tobacco & classic", re: /(tobacco|cuban|virginia|classic|rich tob|double apple)/i }
+};
+const productUrl = (p) => `product.html?id=${p.id}`;
+// WooCommerce add-to-cart link (vid = product or variation id)
+const buyOnlineUrl = (p, q = 1, vid = p.vid) => `${CONFIG.onlineStore}/?add-to-cart=${vid}&quantity=${q}`;
+// shortcut: WooCommerce links add one product at a time, so "Pay online" shows only for a one-line bag; a cart API call would lift this
+const checkoutUrl = (lines) => CONFIG.onlineStore && lines.length === 1 ? buyOnlineUrl(lines[0], lines[0].q, lines[0].vid) : "";
+const priceHtml = (p) => p.p ? `<span class="price"><small>${p.var ? "from" : ""}</small>${R(p.p)}</span>` : `<span class="price ask">Ask for price</span>`;
+const imgHtml = (p, big) => {
+  const src = big ? (p.i || p.t) : p.t;
+  return src
+    ? `<img src="${esc(src)}" alt="${esc(p.n)}" loading="${big ? "eager" : "lazy"}" decoding="async" width="300" height="300" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'noimg',innerHTML:'<img src=&quot;assets/img/logo-sm.webp&quot; alt=&quot;&quot;><span>Photo coming soon</span>'}))">`
+    : `<div class="noimg"><img src="assets/img/logo-sm.webp" alt=""><span>Photo coming soon</span></div>`;
+};
+function cardHtml(p, i = 0) {
+  const fav = isFav(p.id);
+  return `<article class="card" style="--i:${i % 12}">
+    <div class="ph">${imgHtml(p)}<div class="flags">${p.new ? '<span class="flag">New in</span>' : ""}</div>
+      <button class="fav${fav ? " on" : ""}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="Save ${esc(p.n)}">${I.heart}</button></div>
+    <div class="bd"><span class="br">${esc(p.b || p.s)}</span><p class="nm"><a href="${productUrl(p)}">${esc(p.n)}</a></p>
+      <div class="ft">${priceHtml(p)}${p.p ? `<button class="add" data-add="${p.id}" aria-label="Add ${esc(p.n)} to bag">${I.plus}</button>` : ""}</div></div></article>`;
+}
+const slim = (p) => ({ id: p.id, n: p.n, p: p.p, t: p.t, u: p.u, b: p.b, s: p.s, c: p.c, mg: p.mg, var: p.var, vid: p.vid });
+
+const lineKey = (l) => l.id + "|" + (l.opt || "");
+const optText = (l) => l.opt ? `${l.ol || "Strength"}: ${l.opt}${l.req ? " (on request)" : ""}` : "";
+
+/* ---------- cart + favourites ---------- */
+let cart = store.get("mmf_cart", []).filter((l) => l.id);
+let favs = store.get("mmf_favs", []);
+const isFav = (id) => favs.some((f) => f.id === id);
+function saveCart() { store.set("mmf_cart", cart); renderCounts(); if ($("#drawer")?.classList.contains("on") && drawerMode === "cart") renderDrawer(); }
+// a copy of the product photo flies into the bag icon
+function flyToBag(src) {
+  const bag = $("#bag-btn");
+  if (!src || !bag || matchMedia("(prefers-reduced-motion: reduce)").matches || !Element.prototype.animate) return;
+  const a = src.getBoundingClientRect(), b = bag.getBoundingClientRect();
+  if (!a.width) return;
+  const g = src.cloneNode(); g.className = "fly"; g.removeAttribute("loading");
+  Object.assign(g.style, { left: a.left + "px", top: a.top + "px", width: a.width + "px", height: a.height + "px" });
+  document.body.appendChild(g);
+  const dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
+  g.animate([
+    { transform: "translate(0,0) scale(1)", opacity: 1 },
+    { transform: `translate(${dx * .55}px,${dy * .55 - 90}px) scale(.45) rotate(-12deg)`, opacity: 1, offset: .55 },
+    { transform: `translate(${dx}px,${dy}px) scale(.08) rotate(-25deg)`, opacity: .4 }
+  ], { duration: 750, easing: "cubic-bezier(.5,0,.3,1)" }).onfinish = () => g.remove();
+}
+function addToCart(p, q = 1, opt = "", req = false, ol = "", vid = p.vid) {
+  const key = p.id + "|" + opt, line = cart.find((l) => lineKey(l) === key);
+  line ? (line.q += q) : cart.push({ ...slim(p), q, opt, req, ol, vid });
+  lastAdded = key;
+  saveCart();
+  toast(`Added to your bag: ${p.n}${opt ? " · " + opt : ""}`, "View bag", () => openDrawer("cart"));
+  const b = $("#bag-btn"); b?.classList.remove("bump"); void b?.offsetWidth; b?.classList.add("bump");
+}
+function toggleFav(p) {
+  favs = isFav(p.id) ? favs.filter((f) => f.id !== p.id) : [slim(p), ...favs];
+  store.set("mmf_favs", favs); renderCounts();
+  $$(`[data-fav="${p.id}"]`).forEach((b) => { b.classList.toggle("on", isFav(p.id)); b.setAttribute("aria-pressed", isFav(p.id)); });
+  if (drawerMode === "favs" && $("#drawer").classList.contains("on")) renderDrawer();
+  toast(isFav(p.id) ? "Saved to your favourites" : "Removed from favourites");
+}
+function renderCounts() {
+  const n = cart.reduce((s, l) => s + l.q, 0);
+  const c = $("#bag-n"); if (c) { c.textContent = n; c.hidden = !n; }
+  const f = $("#fav-n"); if (f) { f.textContent = favs.length; f.hidden = !favs.length; }
+}
+function rememberSeen(p) {
+  const seen = store.get("mmf_seen", []).filter((s) => s.id !== p.id);
+  store.set("mmf_seen", [slim(p), ...seen].slice(0, 12));
+}
+
+/* ---------- drawer ---------- */
+let lastAdded = "";
+let drawerMode = "cart", fulfil = store.get("mmf_fulfil", "collect");
+if (fulfil === "waves" && !CONFIG.partnerName) fulfil = "collect";
+function openDrawer(mode) { drawerMode = mode; renderDrawer(); $("#drawer").classList.add("on"); $("#scrim").classList.add("on"); document.body.classList.add("lock"); $("#drawer .x").focus(); }
+function closeDrawer() { $("#drawer").classList.remove("on"); $("#scrim").classList.remove("on"); document.body.classList.remove("lock"); }
+function lineHtml(l, fav, i = 0) {
+  const th = l.t ? `<img src="${esc(l.t)}" alt="" loading="lazy">` : `<div class="noimg"><img src="assets/img/logo-sm.webp" alt=""></div>`;
+  return `<div class="li${!fav && lineKey(l) === lastAdded ? " just" : ""}" style="--i:${i}"><a class="th" href="product.html?id=${l.id}">${th}</a>
+    <div><b><a href="product.html?id=${l.id}">${esc(l.n)}</a></b>${!fav && l.opt ? `<span class="optl${l.req ? " req" : ""}">${esc(optText(l))}</span>` : ""}<span class="sub">${l.p ? R(l.p) + (fav ? "" : " each") : "Ask for price"}</span>
+    ${fav ? `<div><button class="btn btn-sm btn-white" data-add="${l.id}" style="margin-top:8px">Add to bag</button><button class="rm" data-unfav="${l.id}">Remove</button></div>`
+      : `<div><span class="qty"><button data-dec="${esc(lineKey(l))}" aria-label="One less">−</button><span>${l.q}</span><button data-inc="${esc(lineKey(l))}" aria-label="One more">+</button></span><button class="rm" data-rm="${esc(lineKey(l))}">Remove</button></div>`}</div>
+    ${fav ? "" : `<span class="lt">${R(l.p * l.q)}</span>`}</div>`;
+}
+function renderDrawer() {
+  const d = $("#drawer");
+  if (drawerMode === "favs") {
+    $(".dh h3", d).textContent = "Favourites";
+    $(".db", d).innerHTML = favs.length ? favs.map((f) => lineHtml(f, true)).join("")
+      : `<div class="empty">${I.heart.replace("<svg", '<svg width="48" height="48"')}<b>Nothing saved yet</b><span>Tap the heart on any product to keep it here.</span></div>`;
+    $(".df", d).hidden = true; return;
+  }
+  $(".dh h3", d).textContent = "Your bag";
+  const total = cart.reduce((s, l) => s + l.p * l.q, 0);
+  $(".db", d).innerHTML = cart.length ? cart.map((l, i) => lineHtml(l, false, i)).join("")
+    : `<div class="empty">${I.bag.replace("<svg", '<svg width="48" height="48"')}<b>Your bag is empty</b><span>Have a look around the shop.</span><a class="btn btn-red btn-sm" href="shop.html">Browse the shop</a></div>`;
+  $(".df", d).hidden = !cart.length;
+  setTimeout(() => (lastAdded = ""), 1500);
+  const pay = $("#d-pay");
+  if (pay) { pay.href = checkoutUrl(cart); pay.hidden = !pay.getAttribute("href") || fulfil === "waves"; }
+  $("#d-total").textContent = R(total);
+  $$("#d-mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.m === fulfil));
+  $("#d-addr-wrap").hidden = fulfil === "collect";
+  $("#d-collect").hidden = fulfil !== "collect";
+  $("#d-ship").hidden = fulfil !== "deliver";
+  $(".df", d).classList.toggle("waves", fulfil === "waves" && CONFIG.partnerLive);
+  $("#d-wave").hidden = fulfil !== "waves";
+}
+function sendOrder() {
+  const name = $("#d-name"), addr = $("#d-addr");
+  if (!name.value.trim()) { name.classList.add("bad"); name.focus(); toast("Add your name so we know whose order it is"); return; }
+  if (fulfil === "deliver" && !addr.value.trim()) { addr.classList.add("bad"); addr.focus(); toast("Add a delivery address (suburb and city is fine)"); return; }
+  const total = cart.reduce((s, l) => s + l.p * l.q, 0);
+  const lines = cart.map((l) => `• ${l.q} x ${l.n}${l.opt ? ` [${optText(l)}]` : ""} (${R(l.p * l.q)})`).join("\n");
+  const asks = cart.some((l) => l.req) ? "\n\nPlease confirm the strengths marked \"on request\"." : "";
+  const how = fulfil === "deliver" ? `Courier to: ${addr.value.trim()} (please quote the delivery cost)` : fulfil === "waves" ? `${CONFIG.partnerName} delivery to: ${addr.value.trim() || "(address to follow)"}` : "I'll collect at MMF Fusion, 231 Monument Road, Glen Marais";
+  const msg = `Hi MMF, I'd like to order:\n\n${lines}\n\nTotal: ${R(total)}\n${how}\nName: ${name.value.trim()}${$("#d-note").value.trim() ? "\nNote: " + $("#d-note").value.trim() : ""}${asks}\n\nI'm 18+ and will have my ID ready.`;
+  store.set("mmf_name", name.value.trim()); saveLastOrder();
+  window.open(wa(msg), "_blank", "noopener");
+}
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(text, action, fn) {
+  const t = $("#toast");
+  t.innerHTML = `<span>${esc(text)}</span>${action ? `<a href="#">${esc(action)}</a>` : ""}`;
+  if (action) $("a", t).onclick = (e) => { e.preventDefault(); t.classList.remove("on"); fn(); };
+  t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 3200);
+}
+
+/* ---------- chrome (strip, header, footer, drawer, gate) ---------- */
+// top runs while the page is still parsing (script sits at the start of <body>), so nothing shifts
+function chromeTop() {
+  const page = document.body.dataset.page;
+  const nav = [["shop.html", "Shop", "shop"], ["shop.html?s=Disposables", "Disposables", ""], ["fit.html", "Coil finder", "fit"], ["about.html", "About", "about"], ["guide.html", "Guide", "guide"], ["visit.html", "Visit us", "visit"], ["help.html", "Delivery & help", "help"]];
+  const navLinks = nav.map(([h, t, k]) => `<a href="${h}"${k && k === page ? ' aria-current="page"' : ""}>${t}</a>`).join("");
+  document.body.insertAdjacentHTML("afterbegin", `
+  <a class="sr" href="#main">Skip to content</a>
+  <div class="progress" aria-hidden="true"></div>
+  <div class="strip"><div class="wrap"><span>231 Monument Road, Glen Marais, Kempton Park</span><span>Courier anywhere in South Africa</span><span>Strictly 18+ · ID on every order</span></div></div>
+  <header class="hdr"><div class="wrap hdr-in">
+    <a class="logo" href="index.html" aria-label="MMF Fusion home"><img src="assets/img/logo-sm.webp" alt="MMF Fusion" width="180" height="89"></a>
+    <nav class="nav" aria-label="Main">${navLinks}</nav>
+    <form class="hsearch" action="shop.html" role="search">${I.search}<label class="sr" for="hq">Search products</label><input id="hq" name="q" type="search" placeholder="Search vapes, juices, pods…"></form>
+    <div class="icons">
+      <button class="ibtn" id="fav-btn" aria-label="Favourites">${I.heart}<span class="n" id="fav-n" hidden>0</span></button>
+      <button class="ibtn" id="bag-btn" aria-label="Your bag">${I.bag}<span class="n" id="bag-n" hidden>0</span></button>
+      <button class="ibtn burger" id="burger" aria-label="Menu">${I.menu}</button>
+    </div></div></header>
+  <div class="mnav" id="mnav" aria-label="Menu"><button class="x" id="mnav-x" aria-label="Close menu">${I.x}</button>
+    <form class="hsearch" action="shop.html" role="search" style="display:flex;max-width:none;margin:0 0 14px">${I.search}<label class="sr" for="mq">Search products</label><input id="mq" name="q" type="search" placeholder="Search products"></form>
+    ${nav.map(([h, t]) => `<a href="${h}">${t}</a>`).join("")}
+    <div class="mfoot"><span>${CONFIG.address.join(", ")}</span><a href="tel:${CONFIG.phone.replace(/\s/g, "")}">${CONFIG.phone}</a></div></div>`);
+  gateTop();
+  renderCounts();
+}
+
+function chromeBottom() {
+  document.body.insertAdjacentHTML("beforeend", `
+  <footer class="ftr"><div class="wrap">
+    <div class="ftr-grid">
+      <div><a class="logo" href="index.html"><img src="assets/img/logo-sm.webp" alt="MMF Fusion" width="180" height="89" loading="lazy"></a>
+        <p>A friendly vape shop on Monument Road in Glen Marais, Kempton Park. Pod kits, mods, juice and the right coil, with honest advice. Courier anywhere in South Africa.</p></div>
+      <div><h4>Shop</h4><ul><li><a href="shop.html?s=Disposables">Disposables</a></li><li><a href="shop.html?s=Devices">Devices &amp; pod kits</a></li><li><a href="shop.html?s=E+Liquids">E-liquids</a></li><li><a href="shop.html?s=Nic+Salts">Nic salts</a></li><li><a href="shop.html?s=Batteries+%26+Chargers">Batteries</a></li><li><a href="fit.html">Coil &amp; pod finder</a></li></ul></div>
+      <div><h4>MMF</h4><ul><li><a href="about.html">About us</a></li><li><a href="visit.html">Visit the shop</a></li><li><a href="guide.html">Vaping guide</a></li><li><a href="help.html">Delivery &amp; help</a></li><li><a href="help.html#faq">FAQs</a></li></ul></div>
+      <div><h4>Talk to us</h4><ul><li><a href="tel:${CONFIG.phone.replace(/\s/g, "")}">${CONFIG.phone}</a></li><li><a href="${wa("Hi MMF!")}" target="_blank" rel="noopener">WhatsApp us</a></li><li><a href="${CONFIG.group}" target="_blank" rel="noopener">Join the WhatsApp group</a></li><li><a href="${igLink()}" target="_blank" rel="noopener">Instagram</a> · <a href="${fbLink()}" target="_blank" rel="noopener">Facebook</a></li><li><a href="mailto:${CONFIG.email}">${CONFIG.email}</a></li><li><a href="${mapsLink}" target="_blank" rel="noopener">${CONFIG.address.join(", ")}</a></li></ul></div>
+    </div>
+    <p class="warn">WARNING: This product contains nicotine. Nicotine is an addictive chemical. Not for sale to persons under the age of 18.</p>
+    <button class="btn btn-line btn-sm" data-install hidden style="margin-top:18px">${I.bag} Add MMF Fusion to your home screen</button>
+    <div class="copy"><span>© ${new Date().getFullYear()} MMF Fusion · 231 Monument Road, Glen Marais, Kempton Park</span><span>Prices and stock change daily. Confirmed when you order.</span></div>
+  </div></footer>
+  <a class="wa-float" href="${wa("Hi MMF!")}" target="_blank" rel="noopener" aria-label="Chat to us on WhatsApp">${I.wa}</a>
+  <div class="scrim" id="scrim"></div>
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Your bag">
+    <div class="dh"><h3>Your bag</h3><button class="x" data-close aria-label="Close">${I.x}</button></div>
+    <div class="db"></div>
+    <div class="df">
+      <div class="seg${CONFIG.partnerName ? " three" : ""}" id="d-mode" role="group" aria-label="How do you want it?"><button data-m="collect">Collect</button><button data-m="deliver">Courier (SA)</button>${CONFIG.partnerName ? `<button data-m="waves">${CONFIG.partnerName}${CONFIG.partnerLive ? "" : " <small>soon</small>"}</button>` : ""}</div>
+      <div class="wavebox" id="d-wave" hidden><b>${CONFIG.partnerLive ? "Fast local delivery" : "Coming soon to Kempton Park"}</b><span>${CONFIG.partnerName} is a delivery service built for vape shops, launching on the East Rand. ${CONFIG.partnerLive ? "Shop prices, an 18+ ID check and a delivery code at your door." : "Send your order on WhatsApp now and we'll tell you if a rider can bring it yet."}</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-line" id="d-copy">Copy my list</button><a class="btn btn-sm btn-wave" id="d-wave-go" target="_blank" rel="noopener">See ${CONFIG.partnerName} ${I.out}</a></div></div>
+      <p class="dnote" id="d-collect">${I.pin}<span><b>Collect at MMF Fusion</b>231 Monument Road, Glen Marais, Kempton Park. We'll WhatsApp you when it's ready. Bring your ID.</span></p>
+      <p class="dnote" id="d-ship" hidden>${I.truck}<span><b>Courier anywhere in South Africa</b>Delivery cost depends on your address and parcel size; we'll quote it before you pay. Dispatched in 3 to 5 business days, tracking by email.</span></p>
+      <div class="field pickup"><label for="d-name">Your name</label><input id="d-name" autocomplete="name" placeholder="Name and surname"></div>
+      <div class="field" id="d-addr-wrap" hidden><label for="d-addr">Delivery address</label><input id="d-addr" autocomplete="street-address" placeholder="Street, suburb, city"></div>
+      <div class="field pickup"><label for="d-note">Anything else? (optional)</label><textarea id="d-note" rows="2" placeholder="Flavour swaps, best time to collect…"></textarea></div>
+      <div class="tot"><span class="muted">Total</span><strong id="d-total">R0</strong></div>
+      ${CONFIG.onlineStore ? `<a class="btn btn-red" id="d-pay" target="_blank" rel="noopener">${I.bag} Pay online now</a>` : ""}
+      <button class="btn btn-wa pickup" id="d-send">${I.wa} Send order on WhatsApp</button>
+      <p class="fine pickup">${CONFIG.onlineStore ? "Pay online through our secure checkout, or send" : "Send"} it on WhatsApp and we'll confirm stock, the total and how to pay before anything is charged. Strictly 18+: ID required on collection and delivery.</p>
+    </div></div>
+  <div class="pick" id="pick" role="dialog" aria-modal="true" aria-labelledby="pick-h" hidden><div class="pick-in">
+    <button class="x" data-pclose aria-label="Close">${I.x}</button>
+    <span class="tag">Options</span><h3 id="pick-h">Choose your flavour</h3><p class="pick-n" id="pick-n"></p>
+    <div class="pick-opts" id="pick-opts" role="radiogroup" aria-label="Strength"></div>
+    <p class="pick-note" id="pick-note">Pick a strength to continue.</p>
+    <button class="btn btn-red" id="pick-go" disabled>${I.bag} Add to bag</button></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>`);
+
+  $("#d-name").value = store.get("mmf_name", "");
+  $("#d-wave-go").href = waveLink();
+  renderCounts();
+}
+
+const GATE_LOGO = '<img src="assets/img/logo.webp" alt="MMF Fusion" width="180" height="89">';
+const gateAskHtml = () => `${GATE_LOGO}<h2 id="gate-h">Are you 18 or older?</h2>
+      <p>We sell nicotine products, so this site is for adults only. We'll check ID when you collect or receive your order.</p>
+      <div class="row"><button class="btn btn-red" id="g-yes">Yes, I'm 18 or older</button><button class="btn btn-line" id="g-no">No</button></div>`;
+const gateNoHtml = () => `${GATE_LOGO}<h2 id="gate-h">Sorry, adults only</h2>
+      <p>You need to be 18 or older to visit this site.</p><button class="btn btn-line btn-sm" id="g-oops">I tapped "No" by mistake</button>`;
+function gateTop() {
+  const answer = store.get("mmf_age", "");
+  if (answer === "yes") return;
+  document.body.insertAdjacentHTML("beforeend", `<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-h"><div class="gate-in" id="gate-in">${answer === "no" ? gateNoHtml() : gateAskHtml()}</div></div>`);
+  document.body.classList.add("lock", "gated"); // the page behind the opaque gate isn't drawn until they're in
+}
+function gate() {
+  const g = $("#gate"), box = $("#gate-in");
+  if (!g) return gateOpen();
+  const bind = () => {
+    const yes = $("#g-yes"), no = $("#g-no"), oops = $("#g-oops");
+    if (yes) { yes.onclick = () => { store.set("mmf_age", "yes"); gateOpen(); g.remove(); document.body.classList.remove("lock", "gated"); dispatchEvent(new Event("resize")); }; yes.focus(); }
+    if (no) no.onclick = () => { store.set("mmf_age", "no"); box.innerHTML = gateNoHtml(); bind(); };
+    if (oops) oops.onclick = () => { box.innerHTML = gateAskHtml(); bind(); };
+  };
+  bind();
+}
+
+/* ---------- global events ---------- */
+document.addEventListener("click", async (e) => {
+  const t = e.target.closest("[data-add],[data-fav],[data-unfav],[data-inc],[data-dec],[data-rm],[data-close],#bag-btn,#fav-btn,#burger,#mnav-x,#d-send,#d-pay,#d-copy,#d-mode button,#scrim,.stars button");
+  if (!t) return;
+  if (t.dataset.add) {
+    e.preventDefault();
+    const id = +t.dataset.add, p = byId.get(id) || favs.find((f) => f.id === id) || (await loadProducts(), byId.get(id));
+    if (!p) return;
+    const qtyEl = t.dataset.qty ? $(t.dataset.qty) : null, q = qtyEl ? Math.max(1, +qtyEl.value || 1) : 1;
+    const img = (t.closest(".card,.pd,.li,.res,.fitc") || document).querySelector(".ph > img, .pic > img, .th img");
+    if (p.var) { openPick(p, q, img); return; }
+    flyToBag(img);
+    addToCart(p, q);
+    if (t.classList.contains("add")) { t.classList.add("ok"); t.innerHTML = I.check; setTimeout(() => { t.classList.remove("ok"); t.innerHTML = I.plus; }, 1200); }
+  } else if (t.dataset.fav) { e.preventDefault(); const id = +t.dataset.fav; toggleFav(byId.get(id) || favs.find((f) => f.id === id)); }
+  else if (t.dataset.unfav) toggleFav(favs.find((f) => f.id === +t.dataset.unfav));
+  else if (t.dataset.inc) { cart.find((l) => lineKey(l) === t.dataset.inc).q++; saveCart(); }
+  else if (t.dataset.dec) { const l = cart.find((l) => lineKey(l) === t.dataset.dec); if (--l.q <= 0) cart = cart.filter((x) => x !== l); saveCart(); }
+  else if (t.dataset.rm) { cart = cart.filter((l) => lineKey(l) !== t.dataset.rm); saveCart(); }
+  else if (t.id === "bag-btn") openDrawer("cart");
+  else if (t.id === "fav-btn") openDrawer("favs");
+  else if (t.id === "burger") $("#mnav").classList.add("on");
+  else if (t.id === "mnav-x") $("#mnav").classList.remove("on");
+  else if (t.id === "d-send") sendOrder();
+  else if (t.id === "d-pay") saveLastOrder();
+  else if (t.id === "d-copy") {
+    const txt = cart.map((l) => `${l.q} x ${l.n}${l.opt ? " (" + l.opt + ")" : ""}`).join("\n");
+    try { await navigator.clipboard.writeText(txt); toast("Your list is copied. Paste it into 7Waves."); } catch { toast("Couldn't copy. Long-press the items to copy them instead."); }
+  }
+  else if (t.dataset.s) rate(t);
+  else if (t.dataset.m) { fulfil = t.dataset.m; store.set("mmf_fulfil", fulfil); renderDrawer(); }
+  else if (t.id === "scrim" || t.hasAttribute("data-close")) closeDrawer();
+});
+document.addEventListener("input", (e) => e.target.classList?.remove("bad"));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeDrawer(); closePick(); $("#mnav")?.classList.remove("on"); } });
+
+let pickState = null;
+async function openPick(p, q, img) {
+  const det = await loadDetail(p.id), ol = det.o || "Option";
+  const opts = (det.v || []).map(([vid, v, price]) => ({ vid, v, price, label: R(price), stock: true }));
+  if (!opts.length) { flyToBag(img); addToCart(p, q); return; }
+  pickState = { p, q, img, opt: null, opts, ol };
+  $("#pick .tag").textContent = p.b || p.s;
+  $("#pick-h").textContent = `Choose your ${ol.toLowerCase()}`;
+  $("#pick-n").textContent = p.n + (q > 1 ? ` · ${q}` : "");
+  $("#pick-opts").innerHTML = opts.map((o, i) => `<button class="popt" role="radio" aria-checked="false" data-pi="${i}"><b>${esc(o.v)}</b><em class="in">${o.label}</em></button>`).join("");
+  $("#pick-go").disabled = true; $("#pick-note").textContent = `${opts.length} in stock. Pick one to continue.`;
+  $("#pick").hidden = false; document.body.classList.add("lock"); $("#pick-opts .popt")?.focus();
+}
+function closePick() { if ($("#pick") && !$("#pick").hidden) { $("#pick").hidden = true; if (!$("#drawer").classList.contains("on")) document.body.classList.remove("lock"); } }
+document.addEventListener("click", (e) => {
+  const o = e.target.closest("#pick .popt");
+  if (o && pickState) {
+    pickState.opt = pickState.opts[+o.dataset.pi];
+    $$("#pick .popt").forEach((b) => b.setAttribute("aria-checked", b === o));
+    $("#pick-go").disabled = false;
+    $("#pick-note").textContent = `${pickState.opt.v} · ${pickState.opt.label}`;
+  } else if (e.target.closest("#pick-go") && pickState?.opt) {
+    const { p, q, img, opt, ol } = pickState; closePick(); flyToBag(img); addToCart({ ...p, p: opt.price }, q, opt.v, false, ol, opt.vid);
+  } else if (e.target.closest("[data-pclose]") || e.target.id === "pick") closePick();
+});
+
+/* ---------- review card, socials, marquee (shared blocks) ---------- */
+function communityHtml() {
+  return `<div class="comm">
+    <div class="rev ring rv"><span class="tag">Been in to see us?</span>
+      <h3>How was your <span class="script">visit?</span></h3>
+      <div class="stars" role="radiogroup" aria-label="Rate your visit">${[1, 2, 3, 4, 5].map((n) => `<button data-s="${n}" role="radio" aria-checked="false" aria-label="${n} star${n > 1 ? "s" : ""}">★</button>`).join("")}</div>
+      <p class="rev-msg">Tap a star. Happy visits go to Google, where a quick review helps the next person find us. Anything less comes straight to us, so we can fix it.</p>
+      <a class="btn rev-go" href="${reviewLink}" target="_blank" rel="noopener">Write a Google review ${I.out}</a>
+      <div class="q" aria-hidden="true">"</div></div>
+    <div class="socials">
+      <a class="soc ig rv" href="${igLink()}" target="_blank" rel="noopener"><svg class="logo-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        <div><h4>Instagram</h4><span>New drops, restocks, clouds</span></div><div class="go">${I.out}</div></a>
+      <a class="soc fb rv" href="${fbLink()}" target="_blank" rel="noopener"><svg class="logo-i" viewBox="0 0 24 24" fill="currentColor"><path d="M14 8V6.5c0-.8.5-1 1-1h2V2h-3c-3 0-4 2-4 4.2V8H8v3.5h2V22h4V11.5h2.8l.4-3.5H14Z"/></svg>
+        <div><h4>Facebook</h4><span>Specials and shop news</span></div><div class="go">${I.out}</div></a>
+    </div></div>
+  <div class="club rv"><div><h3>Join the <span class="script">crew</span></h3><p>Our WhatsApp group gets new flavours, restocks and specials first. Leave any time.</p></div>
+    <a class="btn btn-red" href="${CONFIG.group}" target="_blank" rel="noopener">${I.wa} Join the WhatsApp group</a></div>`;
+}
+function rate(b) {
+  const box = b.closest(".rev"), n = +b.dataset.s, go = $(".rev-go", box);
+  $$(".stars button", box).forEach((x) => { x.classList.toggle("on", +x.dataset.s <= n); x.setAttribute("aria-checked", x === b); });
+  if (n >= 4) {
+    $(".rev-msg", box).textContent = "Thank you! It would mean a lot if you said that on Google too.";
+    go.href = reviewLink; go.innerHTML = `Write a Google review ${I.out}`;
+  } else {
+    $(".rev-msg", box).textContent = "Sorry it wasn't great. Tell us what happened and we'll make it right.";
+    go.href = wa(`Hi MMF, I rated my visit ${n}/5. Here's what happened: `); go.innerHTML = `${I.wa} Tell us privately`;
+  }
+}
+const FEATURES = { partner: !!CONFIG.partnerName };
+function mountShared() {
+  $$("[data-f]").forEach((el) => { const k = el.dataset.f, on = k[0] === "!" ? !FEATURES[k.slice(1)] : FEATURES[k]; if (!on) el.remove(); });
+  $$("[data-community]").forEach((el) => (el.innerHTML = communityHtml()));
+  // marquee items starting with ~ are partner-only
+  $$("[data-marquee]").forEach((el) => { const h = el.dataset.marquee.split("|").filter((w) => w[0] !== "~" || FEATURES.partner).map((w) => `<span>${esc(w.replace(/^~/, ""))}</span>`).join(""); el.innerHTML = `<div class="mq">${h.repeat(4)}</div>`; });
+}
+
+/* numbers tick up to their value */
+function countUp(el, to) {
+  const fmt = (n) => Math.round(n).toLocaleString("en-ZA").replace(/\u00a0/g, " ");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = fmt(to); return; }
+  const t0 = performance.now(), from = 0;
+  const tick = (t) => { const k = Math.min((t - t0) / 1300, 1); el.textContent = fmt(from + (to - from) * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+
+/* mouse-only flourishes: magnetic buttons, tilt, hero spotlight */
+function pointerFx() {
+  if (!matchMedia("(pointer:fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let raf = 0, last;
+  document.addEventListener("pointermove", (e) => {
+    last = e; if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0; const ev = last;
+      const m = ev.target.closest?.(".btn-red,.btn-white,.btn-wa,.btn-wave");
+      if (m) { const r = m.getBoundingClientRect(); m.classList.add("mag"); m.style.transform = `translate(${(ev.clientX - r.left - r.width / 2) * .22}px,${(ev.clientY - r.top - r.height / 2) * .3}px)`; }
+      const c = ev.target.closest?.(".cat,[data-tilt]");
+      if (c) { const r = c.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width - .5, y = (ev.clientY - r.top) / r.height - .5; c.style.transform = `perspective(900px) rotateY(${x * 9}deg) rotateX(${-y * 9}deg)`; }
+      const h = ev.target.closest?.(".hero"), sp = h && $(".spot", h);
+      if (sp) { const r = h.getBoundingClientRect(); sp.style.transform = `translate(${ev.clientX - r.left}px,${ev.clientY - r.top}px)`; }
+    });
+  }, { passive: true });
+  document.addEventListener("pointerout", (e) => {
+    const el = e.target.closest?.(".mag,.cat,[data-tilt]");
+    if (el && !el.contains(e.relatedTarget)) el.style.transform = "";
+  });
+}
+
+/* off-screen sections pause their CSS animations, so only what you can see costs anything */
+function pauseOffscreen() {
+  if (!("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle("off", !e.isIntersecting)), { rootMargin: "120px 0px" });
+  $$("main > section, main > div, .marquee, .ticker, .ftr, .strip").forEach((el) => { el.classList.add("off"); io.observe(el); });
+}
+
+/* reveal on scroll: content stays visible if this never runs */
+function reveal() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+  document.documentElement.classList.add("rv-on");
+  const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }), { rootMargin: "0px 0px -8% 0px" });
+  $$(".rv,.sec-head").forEach((el) => io.observe(el)); // the first callback marks what's already on screen, no layout reads needed
+}
+
+/* ---------- instant search: results as you type, "/" to focus ---------- */
+function liveSearch(form) {
+  const input = $("input", form), box = document.createElement("div");
+  box.className = "sres"; box.hidden = true; box.setAttribute("role", "listbox"); form.appendChild(box);
+  let sel = -1;
+  const draw = async () => {
+    const q = input.value.trim().toLowerCase();
+    if (q.length < 2) { box.hidden = true; return; }
+    const all = await loadProducts(), words = q.split(/\s+/);
+    const hits = all.map((p) => { const hay = (p.n + " " + p.b + " " + p.s).toLowerCase(); return words.every((w) => hay.includes(w)) ? [p, (p.n.toLowerCase().startsWith(q) ? 3 : 0) + (p.b.toLowerCase().startsWith(words[0]) ? 2 : 0) + (p.new ? 1 : 0)] : null; })
+      .filter(Boolean).sort((a, b) => b[1] - a[1]).map((x) => x[0]);
+    sel = -1;
+    box.innerHTML = hits.length
+      ? hits.slice(0, 6).map((p) => `<a role="option" href="${productUrl(p)}">${p.t ? `<img src="${esc(p.t)}" alt="" loading="lazy">` : "<span></span>"}<span><b>${esc(p.n)}</b><small>${esc(p.b || p.s)}</small></span><em>${p.p ? (p.var ? "from " : "") + R(p.p) : ""}</em></a>`).join("") + `<a class="all" href="shop.html?q=${encodeURIComponent(input.value.trim())}">See all ${hits.length} results ${I.arrow}</a>`
+      : `<p>No match for "${esc(input.value.trim())}". <a class="link" href="${wa("Hi MMF, do you have " + input.value.trim() + "?")}" target="_blank" rel="noopener">Ask us on WhatsApp</a></p>`;
+    box.hidden = false;
+  };
+  input.setAttribute("autocomplete", "off");
+  input.addEventListener("input", draw);
+  input.addEventListener("focus", draw);
+  input.addEventListener("keydown", (e) => {
+    const items = $$("a", box); if (box.hidden || !items.length) return;
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); sel = (sel + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length; items.forEach((a, i) => a.classList.toggle("on", i === sel)); }
+    else if (e.key === "Enter" && sel >= 0) { e.preventDefault(); location.href = items[sel].href; }
+    else if (e.key === "Escape") box.hidden = true;
+  });
+  document.addEventListener("click", (e) => { if (!form.contains(e.target)) box.hidden = true; });
+}
+document.addEventListener("keydown", (e) => {
+  if (e.key === "/" && !/input|textarea|select/i.test(document.activeElement.tagName)) { const i = $("#hq"); if (i && i.offsetParent) { e.preventDefault(); i.focus(); } }
+});
+
+/* ---------- order again ---------- */
+const saveLastOrder = () => store.set("mmf_last", cart.map((l) => ({ ...l })));
+
+/* ---------- installable app ---------- */
+let installEvt = null;
+addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installEvt = e; $$("[data-install]").forEach((b) => (b.hidden = false)); });
+document.addEventListener("click", async (e) => {
+  if (!e.target.closest("[data-install]") || !installEvt) return;
+  installEvt.prompt(); await installEvt.userChoice; installEvt = null; $$("[data-install]").forEach((b) => (b.hidden = true));
+});
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((r) => r.update()).catch(() => {}));
+  // a new version took over: reload once so the visitor sees it straight away
+  let had = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (had) location.reload(); had = true; });
+}
+
+chromeTop();
+document.addEventListener("DOMContentLoaded", () => { chromeBottom(); mountShared(); gate(); reveal(); pointerFx(); pauseOffscreen(); $$(".hsearch").forEach(liveSearch); });

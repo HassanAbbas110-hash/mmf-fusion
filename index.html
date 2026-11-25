@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MMF Fusion · Vape Shop in Glen Marais, Kempton Park</title>
+<meta name="description" content="MMF Fusion is a friendly vape shop at 231 Monument Road, Glen Marais, Kempton Park. Pod kits, box mods, e-liquids, coils and disposables from Nasty, Oxbar, BLVK and more. Courier anywhere in South Africa.">
+<link rel="canonical" href="https://mmf-fusion.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MMF Fusion">
+<meta property="og:title" content="MMF Fusion · Fuse the flavour. Fill the room.">
+<meta property="og:description" content="A friendly vape shop in Glen Marais, Kempton Park. Pod kits, mods, juice and the right coil, with honest advice. Courier anywhere in South Africa.">
+<meta property="og:url" content="https://mmf-fusion.vercel.app/">
+<meta property="og:image" content="https://mmf-fusion.vercel.app/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:locale" content="en_ZA">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#060912">
+<link rel="icon" href="assets/img/icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/img/icon-512.png">
+<link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css?v=9">
+<link rel="stylesheet" href="assets/mmf.css?v=9">
+<style>
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cat{position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(170deg,#0f1729,#0a0f1b);border:1px solid var(--line);padding:20px;min-height:250px;display:flex;flex-direction:column;justify-content:flex-end;transition:border-color .3s,transform .2s;transform-style:preserve-3d}
+.cat::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(63,214,240,.22),transparent 62%);opacity:.6;transition:opacity .3s}
+.cat::after{content:"";position:absolute;inset:auto -20% -40% -20%;height:60%;background:radial-gradient(closest-side,rgba(154,140,255,.25),transparent);opacity:0;transition:opacity .4s}
+.cat:hover{border-color:var(--cyan)}
+.cat:hover::before,.cat:hover::after{opacity:1}
+.cat .im{position:absolute;left:50%;top:22px;width:58%;aspect-ratio:1;translate:-50% 0;border-radius:50%;background:#fff;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.7),0 0 0 4px rgba(63,214,240,.12);transition:transform .5s var(--ease)}
+.cat:hover .im{transform:scale(1.07) rotate(-4deg)}
+.cat .im img{width:100%;height:100%;object-fit:contain;padding:14%}
+.cat h3{position:relative;z-index:1;font-size:26px;text-transform:uppercase;line-height:.95}
+.cat span{position:relative;z-index:1;font-size:13px;color:var(--mute)}
+.cat .arr{position:absolute;right:16px;bottom:18px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:all .3s var(--ease)}
+.cat .arr svg{width:15px;height:15px}
+.cat:hover .arr{background:var(--fusion);color:#041019;border-color:transparent;transform:rotate(-45deg)}
+
+.finder{position:relative;overflow:hidden;border-radius:30px;padding:clamp(24px,4.5vw,60px);background:linear-gradient(140deg,#0c1d33 0%,#0b1120 55%,#080c17);border:1px solid #1d3456;display:grid;grid-template-columns:.8fr 1.2fr;gap:48px}
+.finder::after{content:"";position:absolute;width:520px;height:520px;right:-180px;top:-200px;border-radius:50%;background:radial-gradient(closest-side,rgba(63,214,240,.26),transparent);pointer-events:none}
+.finder>*{position:relative;z-index:1}
+.finder h2{font-size:clamp(46px,6vw,78px);line-height:.9;margin:12px 0 16px}
+.finder .side p{color:var(--mute);max-width:360px}
+.picked{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px}
+.picked span{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:999px;background:rgba(63,214,240,.08);border:1px solid rgba(63,214,240,.3)}
+.prog{display:flex;gap:6px;margin-bottom:22px}
+.prog i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.12);transition:background .4s}
+.prog i.on{background:var(--fusion)}
+.stepq{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:16px}
+.stepq p{font-family:var(--head);font-size:30px;font-weight:700;text-transform:uppercase;line-height:1}
+.stepq small{color:var(--dim);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.choice{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;text-align:left;padding:16px;border-radius:18px;background:rgba(0,0,0,.28);border:1.5px solid var(--line);transition:border-color .2s,background .2s,transform .25s var(--ease)}
+.choice:hover{border-color:var(--cyan);background:rgba(63,214,240,.08);transform:translateY(-3px)}
+.choice .gi{grid-row:span 2;width:54px;height:54px;border-radius:15px;background:rgba(63,214,240,.08);display:grid;place-items:center;color:var(--cyan)}
+.choice .gi svg{width:28px;height:28px}
+.choice b{font-size:16px}
+.choice small{color:var(--mute);font-size:13px}
+.anim{animation:qin .45s var(--ease)}
+@keyframes qin{from{opacity:0;transform:translateX(26px)}}
+.fres{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.fres .card .nm{font-size:13px}
+.fres .price{font-size:21px}
+.fres .card .bd{padding:10px}
+.ffoot{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.back{font-size:13.5px;color:var(--mute);text-decoration:underline;margin-top:14px}
+
+.fitbanner{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr auto;gap:18px 30px;align-items:center;padding:clamp(22px,4vw,40px);border-radius:26px;background:linear-gradient(120deg,#0b1222,#0e1630 50%,#1a1540);border:1px solid #26305a;transition:border-color .3s}
+.fitbanner:hover{border-color:var(--cyan)}
+.fitbanner h2{font-size:clamp(36px,5vw,60px);margin:8px 0 10px}
+.fitbanner p{color:var(--mute);max-width:520px}
+.fitbanner .btn{grid-column:2;grid-row:1}
+.fitchips{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px}
+.fitchips span{padding:9px 14px;border-radius:999px;border:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--mute);background:rgba(0,0,0,.25)}
+@media (max-width:700px){.fitbanner{grid-template-columns:1fr}.fitbanner .btn{grid-column:1;grid-row:auto;justify-self:start}}
+.brands{display:flex;flex-wrap:wrap;gap:10px}
+.brand{display:inline-flex;align-items:baseline;gap:8px;padding:12px 18px;border-radius:999px;border:1px solid var(--line);font-family:var(--head);font-size:22px;font-weight:700;text-transform:uppercase;transition:all .2s}
+.brand small{font-family:var(--body);font-size:12px;color:var(--dim);font-weight:600}
+.brand.ours{border-color:rgba(63,214,240,.45);background:rgba(63,214,240,.06)}
+.brand:hover{background:#fff;color:#0b1424;border-color:#fff}
+.brand:hover small{color:#4d5d72}
+.dopts.three{grid-template-columns:repeat(3,1fr)}
+@media (max-width:1000px){.finder{grid-template-columns:1fr}.cats{grid-template-columns:repeat(2,1fr)}.fres{grid-template-columns:repeat(2,1fr)}.dopts.three{grid-template-columns:1fr}}
+@media (max-width:600px){.cat{min-height:210px;padding:14px}.cat h3{font-size:21px}.cat .arr{display:none}.choices{grid-template-columns:1fr}.stepq p{font-size:25px}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","@id":"https://mmf-fusion.vercel.app/#store","name":"MMF Fusion","description":"Vape shop in Glen Marais, Kempton Park: pod systems, box mods, e-liquids, coils, batteries, accessories and disposables.","url":"https://mmf-fusion.vercel.app/","logo":"https://mmf-fusion.vercel.app/assets/img/icon-512.png","image":"https://mmf-fusion.vercel.app/assets/img/og.jpg","email":"info@mmffusion.com","telephone":"+27746406614","priceRange":"R","address":{"@type":"PostalAddress","streetAddress":"231 Monument Road, Glen Marais","addressLocality":"Kempton Park","addressRegion":"Gauteng","addressCountry":"ZA"},"hasMap":"https://www.google.com/maps/search/?api=1&query=MMF+Fusion+231+Monument+Road+Glen+Marais+Kempton+Park","sameAs":["https://www.instagram.com/fusionmmf/","https://www.facebook.com/p/MMF-Fusion-61564144354367/","https://mmffusion.com/"]}</script>
+</head>
+<body data-page="home">
+<script src="assets/site.js?v=9"></script>
+<main id="main">
+
+<section class="vhero intro">
+  <canvas id="fusion" aria-hidden="true"></canvas>
+  <div class="wrap vhero-in">
+    <div>
+      <span class="livechip fade"><span data-i="pin"></span>231 Monument Road · Glen Marais, Kempton Park</span>
+      <h1><span class="w"><span>Fuse</span></span> <span class="w"><span>the</span></span> <span class="w"><span>flavour.</span></span> <span class="l2"><span class="w"><span>Fill</span></span> <span class="w"><span>the</span></span> <span class="w"><span class="fusion-txt">room.</span></span></span></h1>
+      <p class="lead fade d1">Pod kits, box mods, e-liquids, coils and disposables from names like <b>Nasty, Oxbar and BLVK</b>. Pop into our shop in Glen Marais for honest, no-jargon advice, or get it couriered <b>anywhere in South Africa.</b></p>
+      <div class="ctas fade d2">
+        <a class="btn btn-red" href="shop.html">Shop the range <span data-i="arrow"></span></a>
+        <a class="btn btn-line" href="visit.html">Visit the shop</a>
+      </div>
+      <div class="vfacts fade d3">
+        <div><b>8</b>brands we love</div>
+        <div><b>3–5</b>days to dispatch</div>
+        <div><b>SA</b>wide courier</div>
+        <div><b>18+</b>adults only</div>
+      </div>
+    </div>
+    <div class="core" id="core" role="button" tabindex="0" aria-label="Tap the logo">
+      <div class="halo"></div>
+      <div class="rings"></div>
+      <div class="orbit" aria-hidden="true">
+        <span style="--a:0deg"><img src="assets/img/orbit-0.webp" alt="" width="168" height="168" loading="lazy" decoding="async"></span>
+        <span style="--a:60deg"><img src="assets/img/orbit-1.webp" alt="" width="168" height="168" loading="lazy" decoding="async"></span>
+        <span style="--a:120deg"><img src="assets/img/orbit-2.webp" alt="" width="168" height="168" loading="lazy" decoding="async"></span>
+        <span style="--a:180deg"><img src="assets/img/orbit-3.webp" alt="" width="168" height="168" loading="lazy" decoding="async"></span>
+        <span style="--a:240deg"><img src="assets/img/orbit-4.webp" alt="" width="168" height="168" loading="lazy" decoding="async"></span>
+        <span style="--a:300deg"><img src="assets/img/orbit-5.webp" alt="" width="168" height="168" loading="lazy" decoding="async"></span>
+      </div>
+      <i class="shock"></i><i class="shock"></i>
+      <img class="logo-big" src="assets/img/logo.webp" alt="" width="420" height="208" fetchpriority="high">
+      <span class="tip" aria-hidden="true">Tap to fuse</span>
+    </div>
+  </div>
+  <span class="scrollcue" aria-hidden="true"></span>
+</section>
+
+<section class="wrap" id="again" hidden style="padding-top:28px"></section>
+
+<div class="ticker"><div class="mq" id="ticker"></div></div>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="tag">Start here</span><h2>Pick your <span class="script">setup</span></h2></div><p>Browse by type. Not sure what you need? Ask us on WhatsApp and a real person will help.</p></div>
+    <div class="cats" id="cats"></div>
+  </div>
+</section>
+
+<div class="vapour" aria-hidden="true"></div>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="tag">Fresh on the shelf</span><h2>Just <span class="script">landed</span></h2></div><a class="btn btn-line btn-sm" href="shop.html?new=1">See all new arrivals</a></div>
+    <div class="rail" id="new"></div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0" id="finder">
+  <div class="wrap">
+    <div class="finder ring rv">
+      <div class="side">
+        <span class="tag">30-second quiz</span>
+        <h2>Vape <span class="script">finder</span></h2>
+        <p>Three taps and we'll pull your best matches from what's in stock.</p>
+        <div class="picked" id="picked"></div>
+      </div>
+      <div id="quiz" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0" id="spin">
+  <div class="wrap">
+    <div class="spinbox rv">
+      <div class="spin-side">
+        <span class="tag">Can't decide?</span>
+        <h2>Spin the <span class="script">Fusion</span></h2>
+        <p>Pick a type, hit spin and let the reel choose your next flavour from what's in stock.</p>
+        <div class="sf-bar" id="spin-cats"></div>
+        <button class="btn btn-red" id="spin-go">Spin it <span data-i="arrow"></span></button>
+      </div>
+      <div class="reel-wrap">
+        <div class="reel" id="reel"><div class="reel-win" id="reel-win"><img src="assets/img/logo-dark.webp" alt="" width="180" height="89"><b>Ready when you are</b><small></small></div></div>
+        <div class="reel-res" id="reel-res" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0" id="lab">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="tag">The Fusion lab</span><h2>Do the <span class="script">maths</span></h2></div><p>Puff counts are big numbers. Here's what they mean for how you vape.</p></div>
+    <div class="lab">
+      <div class="tool rv">
+        <span class="tag">Disposable burn rate</span>
+        <h3>How long will it last?</h3>
+        <p>Slide in the puffs on the box, how much you vape and the price.</p>
+        <div style="margin-top:22px">
+          <div class="rng"><label for="bn-puffs">Puffs on the box <output id="o-puffs"></output></label><input type="range" id="bn-puffs" min="600" max="40000" step="200" value="15000"></div>
+          <div class="rng"><label for="bn-day">Your puffs a day <output id="o-day"></output></label><input type="range" id="bn-day" min="50" max="800" step="10" value="250"></div>
+          <div class="rng"><label for="bn-price">Price <output id="o-price"></output></label><input type="range" id="bn-price" min="50" max="600" step="10" value="250"></div>
+        </div>
+        <div class="puffbar"><i id="bn-bar"></i></div>
+        <div class="burn"><div><b id="r-days">0</b>days</div><div><b id="r-day">R0</b>a day</div><div><b id="r-month">R0</b>a month</div></div>
+        <p class="fine">Rough guide. Real puffs depend on how long you draw and the device's power setting.</p>
+      </div>
+      <div class="tool cloud rv">
+        <div><small>That's about</small><div class="big fusion-txt" id="r-big">0</div><small id="r-big-l">days of clouds</small>
+          <p class="muted" style="margin-top:16px;font-size:14px">Want it to last longer? Ask us about refillable pod kits, which usually cost less a month.</p>
+          <a class="btn btn-line btn-sm" style="margin-top:16px" href="shop.html?s=Devices">See pod kits</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <a class="fitbanner rv" href="fit.html">
+      <div><span class="tag">Coil &amp; Pod Finder</span><h2>What fits my <span class="script">device?</span></h2>
+        <p>Pick your device and see every coil, pod and tank that fits. Order in one tap.</p></div>
+      <div class="fitchips" id="fitchips"></div>
+      <span class="btn btn-red">Find my coils <span data-i="arrow"></span></span>
+    </a>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="tag">Your way</span><h2>Get it <span class="script">your way</span></h2></div><p>Pop in, collect, or have it delivered.</p></div>
+    <div class="dopts three">
+      <div class="dopt rv"><span class="pill">Glen Marais</span><div class="ic" data-ic="pin"></div><h3>Collect in store</h3><p>Order here and pick it up at 231 Monument Road. We'll WhatsApp you when it's ready. Bring your ID.</p></div>
+      <div class="dopt rv"><span class="pill">Anywhere in SA</span><div class="ic" data-ic="truck"></div><h3>Courier</h3><p>Dispatched in 3 to 5 business days, with tracking by email. The cost depends on your address and parcel size, and we quote it first.</p></div>
+      <a class="dopt wv rv" data-f="partner" id="wave-card" target="_blank" rel="noopener"><span class="pill">Coming soon</span><div class="ic" data-ic="out"></div><h3>7Waves</h3><p>Fast local delivery built for vape shops, launching on the East Rand. ID checked at your door.</p></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0" data-f="partner">
+  <div class="wrap">
+    <div class="waves7 rv">
+      <div>
+        <span class="tag">Coming soon · Kempton Park · with 7Waves</span>
+        <h2>Your flavour.<br>Your door.<br><em>Soon.</em></h2>
+        <p><b>7Waves</b> is a delivery service built only for vape shops, launching on the East Rand. When it reaches Glen Marais, a rider can bring your order straight from our counter, with an 18+ ID check and a delivery code at your door.</p>
+        <div class="w7stats">
+          <div><b>~35</b>min typical delivery</div>
+          <div><b>18+</b>ID + code at the door</div>
+          <div><b>East</b>Rand launch area</div>
+        </div>
+        <div class="ctas"><a class="btn btn-wave" id="wave-cta" target="_blank" rel="noopener">See 7Waves <span data-i="out"></span></a><a class="btn btn-line" href="help.html#waves">How it works</a></div>
+      </div>
+      <div class="phone7" aria-hidden="true">
+        <svg class="map" viewBox="0 0 300 360" preserveAspectRatio="xMidYMid slice">
+          <rect width="300" height="360" fill="#16171a"/>
+          <g stroke="#24262b" stroke-width="10" fill="none" stroke-linecap="round"><path d="M-10 80 L320 120"/><path d="M60 -10 L90 380"/><path d="M-10 250 L320 210"/><path d="M220 -10 L200 380"/></g>
+          <g stroke="#2e3036" stroke-width="4" fill="none"><path d="M-10 170 L320 160"/><path d="M150 -10 L140 380"/><path d="M-10 320 L320 300"/></g>
+          <path id="route7" class="route" d="M70 290 C 90 240, 120 230, 142 190 S 190 150, 210 110 S 240 70, 250 60"/>
+          <circle cx="70" cy="290" r="11" fill="#1478b8"/><text x="70" y="294" font-size="10" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="700">M</text>
+          <circle cx="250" cy="60" r="11" fill="#c8f31d"/>
+          <circle id="rider7" r="8" cx="70" cy="290" fill="#fff" stroke="#c8f31d" stroke-width="3"/>
+        </svg>
+        <div class="sheet">
+          <small>RIDER ON THE WAY · SAMPLE ORDER</small>
+          <div class="eta"><span id="eta7">35</span> min</div>
+          <div class="steps7" id="steps7"><i data-l="Paid"></i><i data-l="Accepted"></i><i data-l="Packed"></i><i data-l="On the way"></i><i data-l="Delivered"></i></div>
+          <div class="code7"><span>Your delivery code</span><b>4821</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- payment strip: add once the shop confirms how customers can pay -->
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="tag">Names you know</span><h2>Shop by <span class="script">brand</span></h2></div><p>The brands on our shelf first, then everything else in stock.</p></div>
+    <div class="brands" id="brands"></div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="tag">The MMF crew</span><h2>Stay in the <span class="script">loop</span></h2></div><p>Follow along for new flavours and specials. Been in to see us? A quick review helps a lot.</p></div>
+    <div data-community></div>
+  </div>
+</section>
+
+</main>
+<script>
+$$("[data-i]").forEach((el) => (el.outerHTML = I[el.dataset.i]));
+$$("[data-ic]").forEach((el) => (el.innerHTML = I[el.dataset.ic]));
+$("#fitchips").innerHTML = ["XROS", "XLIM", "Nord", "Caliburn", "Drag", "Argus", "Aegis", "Vinci"].map((d) => `<span>${d}</span>`).join("") + "<span>and many more</span>";
+document.addEventListener("DOMContentLoaded", () => { const w = $("#wave-card"); if (w) w.href = waveLink(); const c = $("#wave-cta"); if (c) c.href = waveLink(); });
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fmt = (n) => n.toLocaleString("en-ZA").replace(/ /g, " ");
+
+/* brand ticker: the brands on MMF's own shelf (the copies that keep it looping are hidden from screen readers) */
+const MMF_BRANDS = ["Oxbar", "Krush", "Nasty", "BLVK", "Artery", "Bewolk", "Jack Parow", "Nimbar"];
+const tick1 = MMF_BRANDS.map((b) => `<a href="shop.html?q=${encodeURIComponent(b)}">${b}</a><i aria-hidden="true">✦</i>`).join("");
+$("#ticker").innerHTML = tick1 + tick1.replace(/<a /g, '<a tabindex="-1" aria-hidden="true" ').repeat(3);
+
+/* ---------- fusion canvas: a cyan and a violet vapour stream flow in and fuse behind the logo (starts after load) ---------- */
+const afterLoad = (fn) => document.readyState === "complete" ? requestAnimationFrame(fn) : addEventListener("load", () => requestAnimationFrame(fn));
+afterLoad(function fusion() {
+  const cv = $("#fusion"), cx = cv.getContext("2d"), core = $("#core"); if (!cx) return;
+  let W, H, T = { x: 0, y: 0 }, run = true, mouse = { x: -999, y: -999 };
+  const parts = [], burst = [], dpr = Math.min(devicePixelRatio || 1, 2), small = innerWidth < 700;
+  // layout is read only here (after load) and on resize, never while the page is parsing
+  const size = () => { W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const c = core.getBoundingClientRect(), r = cv.getBoundingClientRect(); T = { x: c.left + c.width / 2 - r.left, y: c.top + c.height / 2 - r.top }; };
+  // glow sprites drawn once, then stamped: far cheaper than a gradient per particle per frame
+  const sprite = (rgb, soft) => { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    r.addColorStop(0, `rgba(${rgb},1)`); r.addColorStop(soft ? .35 : .2, `rgba(${rgb},${soft ? .5 : .6})`); r.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c; };
+  const SPR = [sprite("63,214,240"), sprite("154,140,255"), sprite("235,250,255")], PUFF = [sprite("63,214,240", 1), sprite("154,140,255", 1)];
+  // k: 0 cyan stream (from bottom-left), 1 violet stream (from top-right), 2 fused white spark; puff = big soft vapour blob
+  const spawn = (k, p = {}) => {
+    const puff = Math.random() < .22;
+    return Object.assign(p, { k, home: k, puff, x: k ? W + 30 : -30, y: k ? H * (-.05 + Math.random() * .45) : H * (.6 + Math.random() * .45),
+      vx: (k ? -1 : 1) * (1.2 + Math.random() * 1.4), vy: (k ? 1 : -1) * (Math.random() * .8), r: puff ? 26 + Math.random() * 40 : 1 + Math.random() * 2.2,
+      life: 0, max: 260 + Math.random() * 200, ph: Math.random() * 6.3 });
+  };
+  size(); addEventListener("resize", size);
+  const N = small ? 34 : 80;
+  for (let i = 0; i < N; i++) { const p = spawn(i % 2); p.life = Math.random() * p.max; const k = p.life / p.max; p.x += (T.x - p.x) * k; p.y += (T.y - p.y) * k; parts.push(p); }
+  cv.parentElement.addEventListener("pointermove", (e) => { const r = cv.getBoundingClientRect(); mouse = { x: e.clientX - r.left, y: e.clientY - r.top }; }, { passive: true });
+  cv.parentElement.addEventListener("pointerleave", () => (mouse = { x: -999, y: -999 }));
+  // tap the logo: it fuses, a shockwave rolls out and both colours burst together
+  const fuse = () => {
+    for (let i = 0; i < 110; i++) { const a = Math.random() * 6.283, s = 2 + Math.random() * 7; burst.push({ k: i % 3, x: T.x, y: T.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 1 + Math.random() * 2.4, life: 0, max: 60 + Math.random() * 50 }); }
+    core.classList.remove("boom"); void core.offsetWidth; core.classList.add("boom");
+    if (!run) { run = true; requestAnimationFrame(tick); }
+  };
+  core.addEventListener("click", fuse);
+  core.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fuse(); } });
+  function draw() {
+    cx.clearRect(0, 0, W, H); cx.globalCompositeOperation = "lighter";
+    for (const p of parts) {
+      const fade = Math.sin(Math.PI * Math.min(1, p.life / p.max));
+      if (p.puff) { cx.globalAlpha = .05 * fade; cx.drawImage(PUFF[p.k & 1], p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); continue; }
+      const d = p.r * 8; cx.globalAlpha = .8 * fade; cx.drawImage(SPR[p.k], p.x - d / 2, p.y - d / 2, d, d);
+    }
+    for (const b of burst) { const d = b.r * 8; cx.globalAlpha = .9 * (1 - b.life / b.max); cx.drawImage(SPR[b.k], b.x - d / 2, b.y - d / 2, d, d); }
+    cx.globalAlpha = 1;
+  }
+  let last = 0;
+  function tick(t = 0) {
+    if (!run) return;
+    if (t - last < 32) { requestAnimationFrame(tick); return; } // ~30fps is plenty for drifting vapour
+    last = t;
+    for (const p of parts) {
+      const dx = T.x - p.x, dy = T.y - p.y, d = Math.hypot(dx, dy) || 1;
+      // pulled toward the logo, with a swirl around it so the two streams braid together
+      p.vx += dx / d * .09 - dy / d * .05; p.vy += dy / d * .09 + dx / d * .05;
+      p.vx *= .975; p.vy *= .975; p.x += p.vx + Math.sin(p.life / 18 + p.ph) * .35; p.y += p.vy + Math.cos(p.life / 22 + p.ph) * .35; p.life++;
+      const mx = p.x - mouse.x, my = p.y - mouse.y;
+      if (!p.puff && mx * mx + my * my < 6000) { p.k = 2; p.vx -= mx / 300; p.vy -= my / 300; } // your cursor fuses the particles it touches
+      if (d < 40 && !p.puff && Math.random() < .3) p.k = 2; // the streams meet at the core and turn white
+      if (p.life > p.max || d < 12) spawn(p.home, p);
+    }
+    for (const b of burst) { b.x += b.vx; b.y += b.vy; b.vx *= .95; b.vy *= .95; b.life++; }
+    for (let i = burst.length - 1; i >= 0; i--) if (burst[i].life > burst[i].max) burst.splice(i, 1);
+    draw(); requestAnimationFrame(tick);
+  }
+  if (reduced) return draw();
+  // pause when the hero is off screen
+  let vis = false, started = false;
+  new IntersectionObserver(([e]) => { vis = e.isIntersecting; const was = run; run = vis && started; if (run && !was) requestAnimationFrame(tick); }).observe(cv);
+  run = false; draw();
+  // first paint is static; phones get a moment to settle so taps stay instant while the page loads
+  setTimeout(() => { started = true; if (vis && !run) { run = true; requestAnimationFrame(tick); } }, matchMedia("(pointer:coarse)").matches ? 2500 : 600);
+});
+
+/* ---------- 7Waves phone: a sample order plays through ---------- */
+afterLoad(function waves() {
+  const path = $("#route7"), dot = $("#rider7"); if (!path) return;
+  const L = path.getTotalLength(), steps = $$("#steps7 i"), t0 = performance.now();
+  const frame = (k) => {
+    const onWay = Math.min(1, Math.max(0, (k - .35) / .55)), p = path.getPointAtLength(onWay * L);
+    dot.setAttribute("cx", p.x); dot.setAttribute("cy", p.y);
+    const stage = k < .1 ? 1 : k < .22 ? 2 : k < .35 ? 3 : k < .92 ? 4 : 5, eta = String(stage < 4 ? 35 : stage === 5 ? 0 : Math.max(1, Math.round(30 * (1 - onWay))));
+    if (stage !== frame.stage) { frame.stage = stage; steps.forEach((s, i) => s.classList.toggle("on", i < stage)); }
+    if (eta !== frame.eta) { frame.eta = eta; $("#eta7").textContent = eta; }
+  };
+  if (reduced) return frame(.6);
+  let on = false, lastT = 0;
+  const loop = (t) => { if (!on) return; if (t - lastT > 48) { lastT = t; frame(((t - t0) % 9000) / 9000); } requestAnimationFrame(loop); };
+  new IntersectionObserver(([e]) => { const was = on; on = e.isIntersecting; if (on && !was) requestAnimationFrame(loop); }).observe($(".phone7"));
+});
+
+/* ---------- the lab: disposable burn rate ---------- */
+const fillRange = (el) => el.style.setProperty("--p", ((el.value - el.min) / (el.max - el.min) * 100) + "%");
+const burnDays = (puffs, perDay) => puffs / perDay;
+console.assert(burnDays(15000, 250) === 60 && burnDays(600, 50) === 12, "burn maths");
+function burn() {
+  const pf = +$("#bn-puffs").value, d = +$("#bn-day").value, pr = +$("#bn-price").value, days = burnDays(pf, d);
+  $("#o-puffs").textContent = fmt(pf); $("#o-day").textContent = d; $("#o-price").textContent = R(pr);
+  const dTxt = days < 10 ? days.toFixed(1) : String(Math.round(days));
+  $("#r-days").textContent = dTxt; $("#r-big").textContent = dTxt; $("#r-big-l").textContent = `days of clouds · ${R(pr / days * 30)} a month`;
+  $("#r-day").textContent = "R" + (pr / days).toFixed(2); $("#r-month").textContent = R(pr / days * 30);
+  $("#bn-bar").style.setProperty("--w", Math.min(100, days / 60 * 100) + "%");
+}
+$$("#lab input[type=range]").forEach((el) => { fillRange(el); el.addEventListener("input", () => { fillRange(el); burn(); }); });
+burn();
+
+/* ---------- categories, new stock, brands, quiz ---------- */
+const TILES = [
+  ["Disposables", "s=Disposables", (p) => p.s === "Disposables"],
+  ["Pod kits & mods", "s=Devices", (p) => p.s === "Devices"],
+  ["Nic salts", "s=Nic+Salts", (p) => p.s === "Nic Salts"],
+  ["E-liquids", "s=E+Liquids", (p) => p.s === "E Liquids"],
+  ["Coils & pods", "s=Coils%2C+Pods+%26+Tanks", (p) => p.s === "Coils, Pods & Tanks"],
+  ["MTL juice", "s=MTL", (p) => p.s === "MTL"],
+  ["Batteries", "s=Batteries+%26+Chargers", (p) => p.s === "Batteries & Chargers"],
+  ["Accessories", "s=Vape+Accessories", (p) => p.s === "Vape Accessories"]
+];
+const G = {
+  disp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="7" y="6" width="10" height="16" rx="3"/><path d="M10 6V3h4v3"/><path d="M10 12h4"/></svg>',
+  pod: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M9 2h6v7H9z"/><rect x="6.5" y="9" width="11" height="13" rx="3"/><circle cx="12" cy="17" r="1.6"/></svg>',
+  bottle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M10 2h4v3h-4z"/><path d="M9 5h6l1 3v12a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8z"/><path d="M8 12h8"/></svg>',
+  mtl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="9" width="8" height="13" rx="2"/><path d="M10 9V5h4v4M11 2h2v3h-2z"/></svg>',
+  ice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2"/></svg>',
+  fruit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="16" r="4"/><circle cx="16.5" cy="17" r="4"/><path d="M7.5 12C9 7 12 4 17 3M16.5 13c-.5-4-2-7-4.5-9"/></svg>',
+  sweet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M7.5 12 3 8.5v7zM16.5 12 21 8.5v7z"/></svg>',
+  tobacco: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-9 5-15 15-17-1 10-7 15-15 17z"/><path d="M5 21 14 11"/></svg>',
+  r1: '<svg viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="12" fill="currentColor">R200</text></svg>',
+  r2: '<svg viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="12" fill="currentColor">R350</text></svg>',
+  r3: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 12c0-3 4-3 6 0s6 3 6 0-4-3-6 0-6 3-6 0z"/></svg>'
+};
+const STEPS = [
+  { k: "kind", q: "What do you use?", o: [["Disposables", "disp", "Disposable", "Grab-and-go, no refills"], ["Nic Salts", "pod", "Pod kit", "Nic salts for pods"], ["E Liquids", "bottle", "Tank / mod", "Bigger clouds, bigger bottles"], ["MTL", "mtl", "MTL tank", "Tight draw, like a cigarette"]] },
+  { k: "flav", q: "Pick a flavour mood", o: [["ice", "ice", "Icy & minty", "That cold exhale"], ["fruit", "fruit", "Fruity", "Mango, berry, watermelon"], ["sweet", "sweet", "Sweet & dessert", "Candy, custard, soda"], ["tobacco", "tobacco", "Tobacco & classic", "Old-school and smooth"]] },
+  { k: "max", q: "What's the budget?", o: [["200", "r1", "Under R200", "Easy on the pocket"], ["350", "r2", "Under R350", "The sweet spot"], ["0", "r3", "No limit", "Show me the best"]] }
+];
+let ALL = [], ans = {}, step = 0;
+function drawQuiz() {
+  const box = $("#quiz");
+  const prog = `<div class="prog">${[0, 1, 2, 3].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>`;
+  $("#picked").innerHTML = STEPS.filter((s) => ans[s.k]).map((s) => `<span>${s.o.find((o) => o[0] === ans[s.k])[2]}</span>`).join("");
+  if (step < STEPS.length) {
+    const s = STEPS[step];
+    box.innerHTML = `${prog}<div class="anim"><div class="stepq"><p>${s.q}</p><small>Step ${step + 1} of 3</small></div>
+      <div class="choices">${s.o.map(([v, g, t, d]) => `<button class="choice" data-v="${v}"><span class="gi">${G[g]}</span><b>${t}</b><small>${d}</small></button>`).join("")}</div>
+      ${step ? '<button class="back" id="qback">Back</button>' : ""}</div>`;
+    $$(".choice", box).forEach((b) => (b.onclick = async () => { ans[s.k] = b.dataset.v; step++; if (step === STEPS.length && !ALL.length) ALL = await loadProducts(); drawQuiz(); }));
+    if (step) $("#qback").onclick = () => { step--; delete ans[STEPS[step].k]; drawQuiz(); };
+    return;
+  }
+  const re = FLAVOURS[ans.flav].re, max = +ans.max;
+  const hits = ALL.filter((p) => p.s === ans.kind && re.test(p.n) && p.p && (!max || p.p <= max))
+    .sort((a, b) => (!!b.t - !!a.t) || (b.new - a.new) || (max ? 0 : b.p - a.p));
+  // one pick per brand first, so the four results aren't all the same range
+  const seen = new Set(), top = hits.filter((p) => !seen.has(p.b) && seen.add(p.b)).concat(hits).filter((p, i, a) => a.indexOf(p) === i);
+  hits.splice(0, hits.length, ...top);
+  const link = `shop.html?s=${encodeURIComponent(ans.kind)}&f=${ans.flav}${max ? "&max=" + max : ""}`;
+  box.innerHTML = `${prog}<div class="anim"><div class="stepq"><p>${hits.length ? "Your matches" : "Nothing in stock"}</p><small>${hits.length ? fmt(hits.length) + " in stock" : ""}</small></div>
+    ${hits.length ? `<div class="fres">${hits.slice(0, 4).map(cardHtml).join("")}</div>
+      <div class="ffoot"><button class="btn btn-red btn-sm" data-add="${hits[0].id}">Add top pick to bag</button><a class="btn btn-white btn-sm" href="${link}">See all ${fmt(hits.length)}</a><button class="back" id="qre" style="margin:0">Start again</button></div>`
+    : `<p class="muted">Nothing matches that combo today. Try another budget, or <a class="link" target="_blank" rel="noopener" href="${wa("Hi MMF, do you have any " + FLAVOURS[ans.flav].label.toLowerCase() + " " + ans.kind.toLowerCase() + "?")}">ask us on WhatsApp</a>.</p><button class="back" id="qre">Start again</button>`}</div>`;
+  $("#qre").onclick = () => { ans = {}; step = 0; drawQuiz(); };
+}
+drawQuiz();
+
+/* ---------- spin the Fusion: a flavour roulette over real stock ---------- */
+const SPIN = [["Disposables", "Disposables"], ["Nic Salts", "Nic salts"], ["E Liquids", "E-liquids"], ["MTL", "MTL juice"]];
+let spinCat = SPIN[0][0], spinning = false;
+$("#spin-cats").innerHTML = SPIN.map(([v, l]) => `<button class="chip" data-sc="${v}" aria-pressed="${v === spinCat}">${l}</button>`).join("");
+$("#spin-cats").onclick = (e) => { const b = e.target.closest("[data-sc]"); if (!b) return; spinCat = b.dataset.sc; $$("#spin-cats .chip").forEach((x) => x.setAttribute("aria-pressed", x === b)); };
+$("#spin-go").onclick = async () => {
+  if (spinning) return;
+  const all = await loadProducts(), pool = all.filter((p) => p.s === spinCat && p.t && p.p);
+  if (!pool.length) return toast("Nothing in stock there right now. Try another type.");
+  spinning = true; $("#spin-go").disabled = true; $("#reel-res").innerHTML = ""; $("#reel").classList.remove("won");
+  const win = $("#reel-win"), pick = pool[Math.floor(Math.random() * pool.length)];
+  const show = (p) => { win.innerHTML = `<img src="${esc(p.t)}" alt=""><b>${esc(p.n)}</b><small>${esc(p.b || "")}</small>`; win.classList.remove("tick"); void win.offsetWidth; win.classList.add("tick"); };
+  // slows down like a real reel, then lands
+  let delay = reduced ? 0 : 55;
+  while (delay && delay < 420) { show(pool[Math.floor(Math.random() * pool.length)]); await new Promise((r) => setTimeout(r, delay)); delay *= 1.13; }
+  show(pick); $("#reel").classList.add("won");
+  const det = await loadDetail(pick.id), v = det.v && det.v.length ? det.v[Math.floor(Math.random() * det.v.length)] : null;
+  const price = v ? v[2] : pick.p;
+  $("#reel-res").innerHTML = `<p>${v ? `The Fusion says <b>${esc(v[1])}</b>` : "The Fusion has spoken"} · <b>${R(price)}</b></p>
+    <div class="ctas"><button class="btn btn-red btn-sm" id="spin-add">${I.bag} Add to bag</button><a class="btn btn-line btn-sm" href="${productUrl(pick)}">View it</a></div>`;
+  $("#spin-add").onclick = () => { flyToBag($("#reel-win img")); addToCart({ ...pick, p: price }, 1, v ? v[1] : "", false, det.o, v ? v[0] : pick.vid); };
+  spinning = false; $("#spin-go").disabled = false; $("#spin-go").firstChild.textContent = "Spin again ";
+};
+
+const whenNeeded = (fn) => {
+  let done = false; const go = () => { if (done) return; done = true; io && io.disconnect(); ["scroll", "pointerdown", "keydown", "touchstart"].forEach((t) => removeEventListener(t, go)); fn(); };
+  ["scroll", "pointerdown", "keydown", "touchstart"].forEach((t) => addEventListener(t, go, { passive: true, once: true }));
+  const io = "IntersectionObserver" in window ? new IntersectionObserver((es) => es[0].isIntersecting && go(), { rootMargin: "300px 0px" }) : null;
+  io ? io.observe($("#cats")) : afterLoad(go);
+};
+whenNeeded(() => loadProducts().then((all) => {
+  ALL = all;
+  // order again: last bag, still in stock
+  const last = store.get("mmf_last", []).filter((l) => byId.has(l.id));
+  if (last.length) {
+    $("#again").innerHTML = `<div class="again rv in"><div><span class="tag">Welcome back</span><h3>Your last order</h3></div><div class="again-th">${last.slice(0, 5).map((l) => l.t ? `<img src="${esc(l.t)}" alt="${esc(l.n)}" title="${esc(l.n)}${l.opt ? " · " + esc(l.opt) : ""}">` : "").join("")}</div><button class="btn btn-red btn-sm" id="again-go">${I.bag} Add it all again</button></div>`;
+    $("#again").hidden = false;
+    $("#again-go").onclick = () => { last.forEach((l) => addToCart(l, l.q, l.opt, l.req, l.ol, l.vid)); openDrawer("cart"); };
+  }
+  const brandCounts = {};
+  all.forEach((p) => p.b && (brandCounts[p.b] = (brandCounts[p.b] || 0) + 1));
+  $("#cats").innerHTML = TILES.map(([name, q, fn]) => {
+    const list = all.filter(fn), pic = list.find((p) => p.t);
+    return `<a class="cat" href="shop.html?${q}"><div class="im">${pic ? `<img src="${esc(pic.t)}" alt="" loading="lazy" width="150" height="150">` : ""}</div>
+      <h3>${name}</h3><span>${fmt(list.length)} in stock</span><span class="arr">${I.arrow}</span></a>`;
+  }).join("");
+  const fresh = all.filter((p) => p.new && p.t);
+  $("#new").innerHTML = (fresh.length >= 6 ? fresh : all.filter((p) => p.t)).slice(0, 14).map(cardHtml).join("");
+  // MMF's own brands first, then the biggest ranges
+  const ours = new Set(MMF_BRANDS.map((b) => b.toLowerCase()));
+  $("#brands").innerHTML = Object.entries(brandCounts).sort((a, b) => (ours.has(b[0].toLowerCase()) - ours.has(a[0].toLowerCase())) || b[1] - a[1]).slice(0, 20)
+    .map(([b, n]) => `<a class="brand${ours.has(b.toLowerCase()) ? " ours" : ""}" href="shop.html?b=${encodeURIComponent(b)}">${esc(b)}<small>${n}</small></a>`).join("");
+}));
+</script>
+</body>
+</html>
